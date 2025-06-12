@@ -1,0 +1,27 @@
+@startuml
+	title State Diagram: Persistent Hunt in Detection Environment
+	
+	[*] --> Hypothesis_Formed : Based on threat intel or anomalies
+	
+	Hypothesis_Formed --> Data_Collection : Identify required logs and telemetry
+	Data_Collection --> Hunt_Execution : Query and analyze data in SIEM/EDR/DBX
+	
+	Hunt_Execution --> Suspicious_Activity_Found : TTP match or anomaly observed
+	Hunt_Execution --> No_Findings : No evidence detected
+	
+	Suspicious_Activity_Found --> Investigation : Tier 2/3 Analyst investigates
+	Investigation --> Confirmed_Threat : Activity validated as malicious
+	Investigation --> False_Positive : Benign or expected behavior
+	
+	Confirmed_Threat --> Alert_Generation : Generate detection alert/rule
+	Alert_Generation --> SIEM_Enrichment : Feed detection into Elastic/EDR
+	SIEM_Enrichment --> Knowledge_Archive : Store logic & artifacts in KB
+	
+	False_Positive --> Hypothesis_Refinement
+	No_Findings --> Hypothesis_Refinement
+	
+	Hypothesis_Refinement --> Hypothesis_Formed
+	
+	Knowledge_Archive --> [*]
+
+@enduml

@@ -1,0 +1,81 @@
+@startuml
+	title Information Engineering Diagram - Threat Detection Lifecycle
+	
+	entity "Observed TTP" {
+	  + TTP_ID : String
+	  + Source : String
+	  + Time_Reported : DateTime
+	}
+	
+	entity "Detection Analytic" {
+	  + Analytic_ID : String
+	  + Created_By : Analyst
+	  + Tool : {Elastic, Databricks}
+	  + Status : {Deployed, Archived}
+	}
+	
+	entity "Visibility Data" {
+	  + Log_ID : String
+	  + Type : {Network, Endpoint, Other}
+	  + Timestamp : DateTime
+	}
+	
+	entity "Detection Alert" {
+	  + Alert_ID : String
+	  + Triggered_By : Analytic_ID
+	  + Severity : {Low, Medium, High, Critical}
+	}
+	
+	entity "SIEM Dashboard" {
+	  + Dashboard_ID : String
+	  + Active_Alerts : List<Alert_ID>
+	}
+	
+	entity "ServiceNow Ticket" {
+	  + Ticket_ID : String
+	  + Alert_Link : Alert_ID
+	  + Assigned_To : Analyst
+	  + Status : {Open, In Progress, Resolved, Closed}
+	}
+	
+	entity "Analyst (Tiered)" {
+	  + Analyst_ID : String
+	  + Role : {Tier 1, Tier 2, Tier 3}
+	}
+	
+	entity "Investigation Artifact" {
+	  + Artifact_ID : String
+	  + Created_By : Analyst_ID
+	  + Type : {Notebook, Query, Report}
+	  + Location : AWS_S3_Link
+	}
+	
+	entity "Product" {
+	  + Product_ID : String
+	  + Created_By : ProdStaff
+	  + Release_Date : Date
+	  + Includes_Collateral : Boolean
+	}
+	
+	entity "Analytic Knowledge Base" {
+	  + KB_ID : String
+	  + Ticket_Link : Ticket_ID
+	  + Artifacts : List<Artifact_ID>
+	  + Front_End : {ServiceNow, SharePoint}
+	  + Storage : AWS S3
+	}
+	
+	' Relationships
+	"Observed TTP" ||--o{ "Detection Analytic" : originates
+	"Detection Analytic" ||--o{ "Detection Alert" : triggers
+	"Visibility Data" ||--o{ "Detection Analytic" : queried by
+	"Detection Alert" ||--o{ "SIEM Dashboard" : displayed on
+	"Detection Alert" ||--o{ "ServiceNow Ticket" : escalates to
+	"ServiceNow Ticket" ||--o{ "Analyst (Tiered)" : assigned to
+	"Analyst (Tiered)" ||--o{ "Investigation Artifact" : creates
+	"Investigation Artifact" ||--o{ "Analytic Knowledge Base" : stored in
+	"ServiceNow Ticket" ||--o{ "Product" : used in
+	"Product" ||--o{ "ServiceNow Ticket" : closes
+	"ServiceNow Ticket" ||--o{ "Analytic Knowledge Base" : indexed by
+
+@enduml

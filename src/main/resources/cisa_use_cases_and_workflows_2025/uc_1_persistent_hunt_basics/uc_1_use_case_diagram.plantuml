@@ -1,0 +1,46 @@
+@startuml
+	title Persistent Hunt - Detection Environment Use Case
+	
+	actor "Threat Hunter (Tier 2/3 Analyst)" as Hunter
+	actor "Threat Intelligence Platform" as TIP
+	actor "SIEM/EDR Platform" as SIEM
+	actor "Data Lake (Elastic/Databricks)" as DataLake
+	actor "SOC Analyst (Tier 1)" as T1
+	actor "Knowledge Base (S3/SharePoint)" as KB
+	
+	rectangle "Persistent Hunt System" {
+	    usecase "1. Ingest Threat Intel (TTPs, IOCs)" as UC1
+	    usecase "2. Develop Hypotheses Based on TTPs" as UC2
+	    usecase "3. Hunt Across Data Lake & SIEM" as UC3
+	    usecase "4. Detect and Investigate Suspicious Behavior" as UC4
+	    usecase "5. Validate or Refute Hypothesis" as UC5
+	    usecase "6. Document Findings & Update Detection Rules" as UC6
+	    usecase "7. Enrich SOC Alerting with Hunt Results" as UC7
+	}
+	
+	' Interactions
+	Hunter --> UC1
+	TIP --> UC1
+	
+	Hunter --> UC2
+	UC1 --> UC2
+	
+	Hunter --> UC3
+	UC2 --> UC3
+	SIEM --> UC3
+	DataLake --> UC3
+	
+	UC3 --> UC4
+	Hunter --> UC4
+	
+	UC4 --> UC5
+	Hunter --> UC5
+	
+	UC5 --> UC6
+	Hunter --> UC6
+	UC6 --> KB
+	
+	UC6 --> UC7
+	UC7 --> T1
+
+@enduml

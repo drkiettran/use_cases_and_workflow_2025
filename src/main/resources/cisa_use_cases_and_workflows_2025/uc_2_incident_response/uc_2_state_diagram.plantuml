@@ -1,0 +1,41 @@
+@startuml
+	title Incident Response - State Diagram
+	
+	[*] --> Request_Received
+	
+	state Request_Received {
+	  [*] --> Ticket_Creation
+	  Ticket_Creation --> Triage : Auto/manual ticket\nin ServiceNow
+	}
+	
+	Triage --> Assigned_To_CCM : Tier 1 collects info\nand assigns to Case Manager
+	
+	state Scoping_and_Evaluation {
+	  Assigned_To_CCM --> Scoping_Call : Schedule scoping call
+	  Scoping_Call --> Legal_Review : Check legal agreements
+	  Legal_Review --> Active_Threat_Check : Assess if active intrusion
+	  Active_Threat_Check --> Assign_To_IR_Lead : Assign to IR Lead / Tier 2
+	}
+	
+	Assign_To_IR_Lead --> Analysis_Begins
+	
+	state Analysis_Begins {
+	  Analysis_Begins --> Data_Collection : Cloud/Network/Host data
+	  Data_Collection --> Triage_Analytics : Canned analytics in Databricks
+	  Triage_Analytics --> Forensic_Analysis : Full analysis in Databricks + AWS
+	  Forensic_Analysis --> Populate_Report : Auto-populate critical info
+	  Populate_Report --> Handoff_to_Production : Assign to production
+	  Forensic_Analysis --> Catalog_Artifacts : Store in Analytic KB
+	}
+	
+	Handoff_to_Production --> Product_Review
+	
+	state Product_Review {
+	  Product_Review --> Template_Creation : Create product template
+	  Template_Creation --> Finalization : Finalize and stage release
+	  Finalization --> Close_Workflow : Close ticket + production flow
+	}
+	
+	Close_Workflow --> [*]
+
+@enduml

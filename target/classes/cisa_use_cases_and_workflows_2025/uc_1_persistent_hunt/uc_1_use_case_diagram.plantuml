@@ -1,0 +1,114 @@
+@startuml
+	title Use Case Diagram: Adversary Detection and Tiered Response Workflow
+	'left to right direction
+		
+	actor "External Entity (CISA/Industry)" as External
+	actor "Tier 3" <<analyst>> as T3
+	actor "Tier 2" <<analyst>> as T2
+	actor "Tier 1" <<analyst>> as T1
+	actor "Production" <<analyst>> as Prod
+	
+	rectangle "Adversary Detection & Response System" {
+	  
+	  usecase "1. Report Adversary TTP" as UC1
+	  usecase "2. Create Detection Analytic (Elastic/Databricks)" as UC2
+	  usecase "3. Run Detection on Visibility Data" as UC3
+	  usecase "4. Alert to SIEM Dashboard (Elastic)" as UC4
+	  usecase "5. Auto-Triage & Ticket Creation (ServiceNow)" as UC5
+	  usecase "6. Tier 1 Investigation & Ticket Assignment" as UC6
+	  usecase "7. Tier 2 Deep Investigation & Artifact Archival" as UC7
+	  usecase "8. Production Workflow & Product Creation" as UC8
+	  usecase "9. Tier 3 Detection Model Enhancement" as UC9
+	}
+	
+	' Associations
+	External --> UC1
+	T3 --> UC2
+	UC2 --> UC3
+	UC3 --> UC4
+	UC4 --> UC5
+	
+	T1 --> UC6
+	T2 --> UC7
+	Prod --> UC8
+	T3 --> UC9
+	
+	UC5 --> UC6
+	UC6 --> UC7
+	UC6 --> UC8
+	UC6 --> UC9
+	UC7 --> UC8
+	UC7 --> UC9
+
+@enduml
+
+' An improved version:
+@startuml
+	title Improved Use Case: Adversary Detection to Production Workflow
+	left to right direction
+	
+	actor "External Entity (CISA/Industry)" as External
+	actor "Tier 3 Analyst" as T3
+	actor "Tier 2 Analyst" as T2
+	actor "Tier 1 Analyst" as T1
+	actor "Production Staff" as Prod
+	actor "Elastic SIEM" as Elastic
+	actor "Databricks Platform" as DBX
+	actor "ServiceNow" as SN
+	actor "Analytic KB (AWS S3 + SharePoint)" as KB
+	
+	rectangle "Adversary Detection System" {
+	    usecase "1. Observe/Report Adversary TTP" as UC1
+	    usecase "2. Create Detection Analytic (Elastic/DBX)" as UC2
+	    usecase "3. Auto-run Detection on Logs" as UC3
+	    usecase "4. Generate SIEM Alert & Auto-Triage" as UC4
+	    usecase "5. Auto-Creation of Ticket (if critical)" as UC5
+	}
+	
+	rectangle "Tiered Analyst Workflow" {
+	    usecase "6a. Tier 1 Investigation & Ticket Assignment" as UC6a
+	    usecase "6b. Investigate Event in Elastic & Link Data" as UC6b
+	
+	    usecase "7a. Tier 2 Analysis in Elastic & DBX" as UC7a
+	    usecase "7b. Archive Artifacts in KB" as UC7b
+	    usecase "7c. Reassign Ticket to Tier 3/Production" as UC7c
+	
+	    usecase "9a. Enhance Detection Models" as UC9a
+	    usecase "9b. Deploy & Archive to KB" as UC9b
+	}
+	
+	rectangle "Product Development Workflow" {
+	    usecase "8a. Review Ticket & Launch Product Workflow" as UC8a
+	    usecase "8b. Generate Product + LLM Collateral" as UC8b
+	    usecase "8c. Close Ticket and Archive" as UC8c
+	}
+	
+	' Relationships
+	External --> UC1
+	T3 --> UC2
+	UC2 --> UC3
+	UC3 --> UC4
+	Elastic --> UC4
+	UC4 --> UC5
+	SN --> UC5
+	
+	T1 --> UC6a
+	T1 --> UC6b
+	UC6a --> UC7a
+	T2 --> UC7a
+	T2 --> UC7b
+	T2 --> UC7c
+	UC7b --> KB
+	UC7c --> T3
+	UC7c --> Prod
+	
+	Prod --> UC8a
+	UC8a --> UC8b
+	UC8b --> UC8c
+	UC8c --> SN
+	
+	T3 --> UC9a
+	UC9a --> UC9b
+	UC9b --> KB
+
+@enduml

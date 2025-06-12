@@ -1,0 +1,67 @@
+@startuml
+	title Deployment Diagram: Persistent Hunt in Cybersecurity Detection Environment
+	
+	node "Security Operations Center (SOC)" as SOC{
+	    node "Tier 2/3 Analyst Workstation" as Tier23 {
+	        artifact "Jupyter Notebooks"
+	        artifact "Hunting Scripts (Python, SQL)"
+	    }
+	
+	    node "Threat Hunting Orchestration" as THO {
+	        artifact "Hunt Scheduler"
+	        artifact "Detection Rule Engine" as DRE
+	    }
+	}
+	
+	node "Analytics Platform" as AP {
+	    node "Elastic SIEM" as ES {
+	        artifact "Aggregated Logs"
+	        artifact "Detection Rules"
+	    }
+	
+	    node "Databricks" as DB {
+	        artifact "Telemetry Processing Pipelines"
+	        artifact "Behavioral Analytics Models"
+	    }
+	}
+	
+	node "Threat Intelligence Layer" as TIL {
+	    artifact "MITRE ATT&CK TTPs"
+	    artifact "Commercial Intel Feeds"
+	    artifact "Open Source IOCs"
+	}
+	
+	node "Data Lake (Cloud/On-Prem)" as DL {
+	    artifact "Endpoint Logs"
+	    artifact "Network Traffic (Zeek/PCAP)"
+	    artifact "Authentication Logs"
+	    artifact "Cloud Logs (AWS/Azure)"
+	}
+	
+	node "Knowledge Base (S3 + SharePoint)" as KB {
+	    artifact "Hunting Playbooks"
+	    artifact "Archived Artifacts"
+	    artifact "Detection Model Versions"
+	}
+	
+	' Communication Lines
+	
+	Tier23 --> THO : submit hunt hypothesis
+	THO --> DB : query historical logs
+	DB --> DL : ETL & feature extraction
+	DB --> ES : feed detection patterns
+	ES --> THO : alert events
+	ES --> Tier23 : forward hits & dashboards
+	TIL --> DRE : enrich TTPs
+	Tier23 --> KB
+	
+	' "Tier 2/3 Analyst Workstation" --> "Threat Hunting Orchestration" : submit hunt hypothesis
+	' "Threat Hunting Orchestration" --> "Databricks" : query historical logs
+	' "Databricks" --> "Data Lake (Cloud/On-Prem)" : ETL & feature extraction
+	' "Databricks" --> "Elastic SIEM" : feed detection patterns
+	' "Elastic SIEM" --> "Threat Hunting Orchestration" : alert events
+	' "Elastic SIEM" --> "Tier 2/3 Analyst Workstation" : forward hits & dashboards
+	' "Threat Intelligence Layer" --> "Detection Rule Engine" : enrich TTPs
+	' "Tier 2/3 Analyst Workstation" --> "Knowledge Base (S3 + SharePoint)" : store hunt artifacts
+
+@enduml

@@ -1,0 +1,75 @@
+@startuml
+	title Object Diagram: Adversary Detection and Analyst Workflow
+	
+	object AdversaryTTP {
+	  id = "TTP-001"
+	  source = "CISA"
+	  description = "Observed phishing + C2 beacon"
+	}
+	
+	object DetectionAnalytic {
+	  id = "DA-Elastic-77"
+	  tool = "Elastic"
+	  status = "Deployed"
+	}
+	
+	object Alert {
+	  type = "Behavior Match"
+	  severity = "High"
+	  timestamp = "2025-06-04T10:30Z"
+	}
+	
+	object Ticket {
+	  id = "SN-55821"
+	  status = "Assigned"
+	  assignedTo = "Tier 2 Analyst"
+	}
+	
+	object Tier3Analyst {
+	  role = "Tier 3"
+	  name = "A. Johnson"
+	}
+	
+	object Tier2Analyst {
+	  role = "Tier 2"
+	  name = "J. Patel"
+	}
+	
+	object Artifact {
+	  type = "Notebook"
+	  path = "s3://analytic-kb/patrol/investigation-notebook.ipynb"
+	}
+	
+	object KnowledgeBase {
+	  interface = "ServiceNow / SharePoint"
+	  storage = "AWS S3"
+	}
+	
+	object SystemToolElastic {
+	  name = "Elastic"
+	}
+	
+	object SystemToolDatabricks {
+	  name = "Databricks"
+	}
+	
+	object SystemToolServiceNow {
+	  name = "ServiceNow"
+	}
+	
+	' Relationships
+	AdversaryTTP --> DetectionAnalytic
+	DetectionAnalytic --> Alert
+	Alert --> Ticket
+	Ticket --> Tier2Analyst
+	Tier2Analyst --> Artifact
+	Artifact --> KnowledgeBase
+	Tier3Analyst --> DetectionAnalytic
+	Tier3Analyst --> Ticket
+	Tier3Analyst --> SystemToolElastic
+	Tier2Analyst --> SystemToolDatabricks
+	Tier2Analyst --> SystemToolElastic
+	Tier2Analyst --> SystemToolServiceNow
+	Ticket --> SystemToolServiceNow
+
+@enduml

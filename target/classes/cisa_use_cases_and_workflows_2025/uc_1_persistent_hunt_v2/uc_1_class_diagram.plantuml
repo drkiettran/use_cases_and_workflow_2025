@@ -1,0 +1,92 @@
+@startuml
+	title Class Diagram: Tiered Detection & Response Workflow
+	
+	class AdversaryTTP {
+	  +id: String
+	  +description: String
+	  +source: String
+	}
+	
+	class DetectionAnalytic {
+	  +id: String
+	  +platform: String
+	  +status: String
+	  +runOn(): TelemetryData
+	}
+	
+	class TelemetryData {
+	  +type: String
+	  +source: String
+	}
+	
+	class SIEMDashboard {
+	  +alerts: List<Alert>
+	}
+	
+	class Alert {
+	  +id: String
+	  +severity: String
+	  +timestamp: DateTime
+	}
+	
+	class Ticket {
+	  +id: String
+	  +status: String
+	  +createdBy: String
+	  +assignedTo: Analyst
+	  +linkedAlert: Alert
+	}
+	
+	class Investigation {
+	  +startTime: DateTime
+	  +endTime: DateTime
+	  +findings: String
+	}
+	
+	class Product {
+	  +id: String
+	  +content: String
+	  +released: Boolean
+	}
+	
+	class Artifact {
+	  +id: String
+	  +type: String
+	  +location: String
+	}
+	
+	class Analyst {
+	  +id: String
+	  +name: String
+	}
+	
+	class Tier1Analyst
+	class Tier2Analyst
+	class Tier3Analyst
+	class ProductionStaff
+	
+	Analyst <|-- Tier1Analyst
+	Analyst <|-- Tier2Analyst
+	Analyst <|-- Tier3Analyst
+	Analyst <|-- ProductionStaff
+	
+	AdversaryTTP --> DetectionAnalytic
+	DetectionAnalytic --> TelemetryData
+	DetectionAnalytic --> Alert
+	Alert --> SIEMDashboard
+	Alert --> Ticket
+	Ticket --> Investigation
+	Investigation --> Artifact
+	Investigation --> Tier1Analyst
+	Investigation --> Tier2Analyst
+	Investigation --> Tier3Analyst
+	Ticket --> Product
+	Product --> ProductionStaff
+	Artifact --> KnowledgeBase
+	
+	class KnowledgeBase {
+	  +frontend: String
+	  +backend: String
+	}
+
+@enduml

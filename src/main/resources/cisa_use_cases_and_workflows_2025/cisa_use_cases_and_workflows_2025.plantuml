@@ -1,0 +1,47 @@
+@startuml
+	left to right direction
+	
+	package "Roles int the Use Cases" as Roles {
+		actor "Tier 1" <<analyst>> as T1
+			note right
+				* triage & task routing
+			end note
+		actor "Tier 2" <<analyst>> as T2
+			note right
+				* first-past & 
+				  short-turn around analysis
+			end note
+		actor "Tier 3" <<analyst>> as T3
+			note right
+				* specialized analysis
+			end note
+		actor "Production" <<analyst>> as PR
+			note right
+				* finishing, packaging, 
+				  and routing CISA 
+				  analytic products. 
+			end note
+		actor "Leadership" <<CISA>> as LD
+			note left
+				* directing & 
+				  prioritizing CISA 
+				  lines of effort
+			end note
+		actor "External Entity \n(CISA/Industry)" as External
+		
+	}
+	package "Technology Use Cases" as Technology {
+		usecase " 1. Persistent Hunt" as PH
+		usecase " 2. Incident Response" as IR
+		usecase " 3. Vulnerability Disclose" as VD
+		usecase " 4. Vulnerability Snapshot or Report Delivery" as VS
+		usecase " 5. Leadership Work Prioritization" as LP
+		usecase " 6. Natural Disaster With Downstream Cybersecurity Incident" as ND
+		usecase " 7. Indicators of Compromise Alerting" as IC
+		usecase " 8. Ingestion of External Customer/Partner Data" as IE
+		usecase " 9. Trending Reports" as TR
+		usecase "10. Risk Reduction Activities" as RR
+		usecase "11. Push Alerts to Siem-as-a-Service Customers" as PA
+	}
+	Roles --> Technology
+@enduml

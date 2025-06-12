@@ -1,0 +1,37 @@
+@startuml
+	title Activity Diagram: Persistent Hunt in Detection Environment
+	
+	start
+	
+	:Ingest Threat Intelligence;
+	:Formulate Hypothesis Based on TTPs (e.g. MITRE ATT&CK);
+	:Identify Relevant Datasets (EDR, logs, telemetry);
+	:Query & Correlate Data in Platform (Elastic, Databricks);
+	
+	if (Suspicious Behavior Detected?) then (Yes)
+	  :Investigate with Tier 2/3 Analysts;
+	  :Pivot Across Logs, Endpoints, NetFlow;
+	  :Create Detection Analytic;
+	  
+	  :Deploy Analytic in Elastic/Databricks;
+	  :Generate Alert to SIEM Dashboard;
+	  :Auto-Triage and Create Ticket (if critical);
+	
+	  if (High Confidence Threat?) then (Yes)
+	    :Assign to Tier 1 for Review;
+	    :Escalate to Tier 2/3 as Needed;
+	    :Initiate Containment / Response Actions;
+	  else (No)
+	    :Flag as Low Priority or False Positive;
+	  endif
+	
+	  :Archive Artifacts to Knowledge Base (e.g., AWS S3, SharePoint);
+	  :Refine Hypothesis and Detection Logic;
+	else (No)
+	  :Mark Hypothesis as Non-evidenced;
+	  :Log Findings and Improve Hunt Strategy;
+	endif
+	
+	:Repeat Hunt Continuously;
+	stop
+@enduml

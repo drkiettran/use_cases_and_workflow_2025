@@ -1,0 +1,42 @@
+@startuml
+	title Sequence Diagram: Persistent Hunt Implementation
+	
+	actor "Tier 3 Threat Hunter" as Hunter
+	participant "Threat Intelligence Platform" as TIP
+	participant "Log Data Lake (Elastic/Databricks)" as Datalake
+	participant "Detection Engine" as Detection
+	participant "SIEM (e.g., Elastic)" as SIEM
+	participant "ServiceNow" as SN
+	participant "Analytic Knowledge Base (KB)" as KB
+	
+	== Hypothesis Driven Hunt ==
+	Hunter -> TIP : Ingest latest TTPs/IOCs (MITRE ATT&CK, STIX)
+	Hunter -> Hunter : Formulate hypothesis on threat presence
+	Hunter -> Datalake : Query telemetry (network, host, cloud logs)
+	
+	== Detection Execution ==
+	Datalake -> Detection : Trigger behavior analytic (YARA, Sigma, ML)
+	Detection -> SIEM : Send detection results (alerts, risk scores)
+	
+	== Alert and Ticketing ==
+	SIEM -> SN : Auto-create ticket if critical alert
+	SN -> Hunter : Notify analyst for triage
+	
+	== Investigation and Enrichment ==
+	Hunter -> SIEM : Pivot through correlated alerts
+	Hunter -> Datalake : Enrich with raw log evidence
+	Hunter -> TIP : Check for related threat campaigns
+	Hunter -> KB : Archive investigation artifacts & findings
+	
+	== Feedback and Loop ==
+	Hunter -> Detection : Refine analytics based on findings
+	Detection -> Datalake : Re-deploy improved models
+	Detection -> KB : Store updated analytic signatures
+	
+	loop Continuous Monitoring
+	    Detection -> SIEM : Stream detection alerts
+	    SIEM -> SN : Ticket high-priority threats
+	    SN -> Hunter : Notify for next hunt
+	end
+
+@enduml

@@ -1,0 +1,58 @@
+@startuml
+	left to right direction
+	title Incident Response Use Case Diagram
+	
+	actor "CISA Customer" as Customer
+	actor "Help Desk" as HelpDesk
+	actor "Tier 1 Analyst" as Tier1
+	actor "Cyber Case Manager (CCM)" as CCM
+	actor "Tier 2 Analyst" as Tier2
+	actor "Production Staff" as Prod
+	
+	rectangle "Incident Response System (ServiceNow + Ops Environment)" {
+	    usecase "Submit Incident Request" as UC1
+	    usecase "Auto or Manual Ticket Creation" as UC2
+	    usecase "Review and Update Ticket" as UC3
+	    usecase "Assign Ticket to CCM" as UC4
+	    usecase "Schedule Scoping Call and Validate Data Access" as UC5
+	    usecase "Plan Data Collection (EDR/Sensors)" as UC6
+	    usecase "Assign to IR Lead or Tier 2 Analyst" as UC7
+	    usecase "Perform Forensic Analysis\n(Databricks + AWS)" as UC8
+	    usecase "Triage with Canned Analytics" as UC9
+	    usecase "Capture Key Findings in Ticket" as UC10
+	    usecase "Auto-populate Report Template" as UC11
+	    usecase "Hand Off to Production Staff" as UC12
+	    usecase "Archive Artifacts in AKB" as UC13
+	    usecase "Review and Finalize Product" as UC14
+	    usecase "Publish Report + Collateral" as UC15
+	    usecase "Close Ticket and Workflow" as UC16
+	}
+	
+	' Customer entry points
+	Customer --> UC1
+	HelpDesk --> UC2
+	UC1 --> UC2
+	
+	' Tier 1 responsibilities
+	Tier1 --> UC3
+	Tier1 --> UC4
+	
+	' Case manager responsibilities
+	CCM --> UC5
+	CCM --> UC6
+	CCM --> UC7
+	
+	' Tier 2 responsibilities
+	Tier2 --> UC8
+	Tier2 --> UC9
+	Tier2 --> UC10
+	Tier2 --> UC11
+	Tier2 --> UC12
+	Tier2 --> UC13
+	
+	' Production staff responsibilities
+	Prod --> UC14
+	Prod --> UC15
+	Prod --> UC16
+
+@enduml

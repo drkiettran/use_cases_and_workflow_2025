@@ -1,0 +1,98 @@
+@startuml
+	title Deployment Diagram: Threat Detection and Response Workflow
+	'left to right direction
+	
+	' Define nodes for deployment environment
+	node "CISA / External Observers" as CISA {
+	  artifact "Observed TTP" as TTP
+	}
+	
+	' node "Tier 3 Analyst Workstation" as Tier3 {
+	'   component "Elastic" as Elastic
+	'   component "Databricks" as Databricks
+	' }
+	
+	node "Ops Environment" as Ops {
+	  node "Analytics Pipeline" {
+	    component "Detection Analytic" as Detection 
+	    component "Telemetry Ingest (Net/EDR/Logs)" as Telemetry 
+	  }
+	  component "SIEM Dashboard (Elastic)" as SIEM
+	  component "Ticketing System (ServiceNow)" as Ticketing
+	}
+	
+	node "Tier 1 Analyst Workstation" as Tier1{
+	  component "Elastic UI" as ElasticUI1
+	  component "ServiceNow" as ServiceNow1
+	}
+	
+	node "Tier 2 Analyst Workstation" as Tier2 {
+	  component "Elastic UI" as ElasticUI2
+	  component "Databricks" as Databricks2
+	  component "ServiceNow" as ServiceNow2
+	}
+	
+	node "Tier 3 Analyst Workstation" as Tier3 {
+	  component "Elastic UI" as ElasticUI3
+	  component "Databricks" as Databricks3
+	  component "ServiceNow" as ServiceNow3
+	}
+	
+	node "Production Staff Workstation" as Production{
+	  component "ServiceNow" as ServiceNow4
+	  component "LLM + Templates" as LLM
+	}
+	
+	node "Analytic Knowledge Base" as Analytic {
+	  component "ServiceNow Frontend" as SerivceNowFrontend
+	  component "AWS S3 Backend" as AWSS3Backend
+	}
+	
+	' Deployment relationships
+	CISA --> Detection : Observed TTP triggers development
+	Detection --> SIEM : Send Alert
+	SIEM --> Ticketing : Auto ticket if critical
+	Ticketing --> Tier1 : Notify & Assign
+	Tier1 --> ElasticUI1 : Investigate
+	Tier1 --> ServiceNow1 : Assign to Tier 2 or Close
+	
+	' CISA --> "Detection Analytic" : Observed TTP triggers development
+	' "Detection Analytic" --> "SIEM Dashboard (Elastic)" : Send Alert
+	' "SIEM Dashboard (Elastic)" --> "Ticketing System (ServiceNow)" : Auto ticket if critical
+	' "Ticketing System (ServiceNow)" --> "Tier 1 Analyst Workstation" : Notify & Assign
+	' "Tier 1 Analyst Workstation" --> "Elastic UI" : Investigate
+	' "Tier 1 Analyst Workstation" --> "ServiceNow" : Assign to Tier 2 or Close
+	
+	ServiceNow1 --> Tier2 : Notify & Assign
+	Tier2 --> ElasticUI2 : Pivot
+	Tier2 --> Databricks2 : Query & Notebooks
+	Tier2 --> ServiceNow2 : Assign to Tier 3 or Production
+	Tier2 --> Analytic : Archive Artifacts
+	
+	' "ServiceNow" --> "Tier 2 Analyst Workstation" : Notify & Assign
+	' "Tier 2 Analyst Workstation" --> "Elastic UI" : Pivot
+	' "Tier 2 Analyst Workstation" --> "Databricks" : Query & Notebooks
+	' "Tier 2 Analyst Workstation" --> "ServiceNow" : Assign to Tier 3 or Production
+	' "Tier 2 Analyst Workstation" --> "Analytic Knowledge Base" : Archive Artifacts
+	
+	ServiceNow3 --> Production : Notify
+	Production --> LLM : Generate Product
+	Production --> ServiceNow4 : Finalize and Close
+	
+	' "ServiceNow" --> "Production Staff Workstation" : Notify
+	' "Production Staff Workstation" --> "LLM + Templates" : Generate Product
+	' "Production Staff Workstation" --> "ServiceNow" : Finalize and Close
+	
+	ServiceNow2 --> Tier3 : Notify
+	Tier3 --> ElasticUI3 : Model Dev
+	Tier3 --> Databricks3 : Model Dev
+	Tier3 --> ServiceNow3 : Close Ticket
+	Tier3 --> Analytic : Archive Artifacts
+	
+	' "ServiceNow" --> "Tier 3 Analyst Workstation" : Notify
+	' "Tier 3 Analyst Workstation" --> "Elastic UI" : Model Dev
+	' "Tier 3 Analyst Workstation" --> "Databricks" : Model Dev
+	' "Tier 3 Analyst Workstation" --> "ServiceNow" : Close Ticket
+	' "Tier 3 Analyst Workstation" --> "Analytic Knowledge Base" : Archive Artifacts
+
+@enduml

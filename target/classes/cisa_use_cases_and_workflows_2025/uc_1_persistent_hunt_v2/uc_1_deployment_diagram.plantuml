@@ -1,0 +1,88 @@
+@startuml
+	title Deployment Diagram: Detection Analytic and Response Workflow
+	
+	node "CISA/Industry Reporters" as CR {
+	  artifact "Observed Adversary TTP" as TTP
+	}
+	
+	node "Elastic Stack" as ES {
+	  component "Detection Engine" as DE
+	  component "SIEM Dashboard" as SIEM
+	}
+	
+	node "Databricks" as DB {
+	  component "Notebook Environment" as NE
+	  component "ML Analytic Engine" as ML
+	}
+	
+	node "ServiceNow Platform" as SP {
+	  component "Ticketing System" as TS
+	  component "Workflow Automation" as WA
+	  component "Analytic Knowledge Base (Frontend)" as AKB
+	}
+	
+	node "AWS Cloud" as Cloud{
+	  database "S3 Bucket" as S3
+	}
+	
+	node "LLM Tooling System" as LLM {
+	  component "Template Generator" as TG
+	  component "Product Auto-Creation"  as PAC
+	}
+	
+	actor "Tier 3 Analyst" as Tier3
+	actor "Tier 2 Analyst" as Tier2
+	actor "Tier 1 Analyst" as Tier1
+	actor "Production Staff" as PS
+	
+	' Interactions
+	TTP --> DE : TTP Observed\n(Tier 3 Analyst)
+	DE --> SIEM : Trigger Alert
+	SIEM --> TS : Auto-Triage & Alert
+	TS --> Tier1 : Notify and Assign
+	Tier1 --> SIEM : Investigate
+	Tier1 --> TS : Assign to Tier 2 or Close
+	
+	' "Observed Adversary TTP" --> "Detection Engine" : TTP Observed\n(Tier 3 Analyst)
+	' "Detection Engine" --> "SIEM Dashboard" : Trigger Alert
+	' "SIEM Dashboard" --> "Ticketing System" : Auto-Triage & Alert
+	' "Ticketing System" --> "Tier 1 Analyst" : Notify and Assign
+	' "Tier 1 Analyst" --> "SIEM Dashboard" : Investigate
+	' "Tier 1 Analyst" --> "Ticketing System" : Assign to Tier 2 or Close
+
+	Tier2 --> NE : Investigate & Correlate
+	Tier2 --> ML
+	Tier2 --> TS : Assign to Tier 3 or Production
+	Tier2 --> AKB
+	AKB --> S3 : Link to Artifact
+	
+	' "Tier 2 Analyst" --> "Notebook Environment" : Investigate & Correlate
+	' "Tier 2 Analyst" --> "ML Analytic Engine"
+	' "Tier 2 Analyst" --> "Ticketing System" : Assign to Tier 3 or Production
+	' "Tier 2 Analyst" --> "Analytic Knowledge Base (Frontend)"
+	' "Analytic Knowledge Base (Frontend)" --> S3 : Link to Artifact
+
+	Tier3 --> DE : Deploy New Analytics
+	Tier3 --> NE
+	Tier3 --> TS : Close Ticket
+	Tier3 --> AKB
+	AKB --> S3
+	
+	' "Tier 3 Analyst" --> "Detection Engine" : Deploy New Analytics
+	' "Tier 3 Analyst" --> "Notebook Environment"
+	' "Tier 3 Analyst" --> "Ticketing System" : Close Ticket
+	' "Tier 3 Analyst" --> "Analytic Knowledge Base (Frontend)" --> S3
+
+	PS --> WA
+	WA --> TG
+	TG --> PAC
+	PAC --> WA : Finalize and Release
+	WA --> TS : Close Workflow
+	
+	' "Production Staff" --> "Workflow Automation"
+	' "Workflow Automation" --> "Template Generator"
+	' "Template Generator" --> "Product Auto-Creation"
+	' "Product Auto-Creation" --> "Workflow Automation" : Finalize and Release
+	' "Workflow Automation" --> "Ticketing System" : Close Workflow
+
+@enduml

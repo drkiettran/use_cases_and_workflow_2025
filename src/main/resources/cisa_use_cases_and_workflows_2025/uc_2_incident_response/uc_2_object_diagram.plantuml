@@ -1,0 +1,69 @@
+@startuml
+	title Object Diagram - Incident Response Workflow
+	
+	object Customer {
+	  +Request Assistance
+	  +Provide Data Access
+	  +Deploy EDR/Forensics Tools
+	}
+	
+	object ServiceNowTicket {
+	  +status = "Open"
+	  +type = "Incident Response"
+	  +data = [Customer Info, Logs, Artifacts]
+	}
+	
+	object Tier1Analyst {
+	  +Review Ticket
+	  +Follow-up with Customer
+	  +Assign to Case Manager
+	}
+	
+	object CyberCaseManager {
+	  +Review Scope
+	  +Validate Data Access
+	  +Assign IR Lead or Tier2
+	}
+	
+	object Tier2Analyst {
+	  +Analyze Data
+	  +Use Databricks + AWS Workspace
+	  +Populate Report Template
+	  +Capture Artifacts
+	}
+	
+	object ProductionStaff {
+	  +Develop Product
+	  +Trigger Workflow
+	  +Release Product
+	}
+	
+	object Databricks {
+	  +Run Canned Analytics
+	  +Notebook Interface
+	}
+	
+	object AWSAnalyticWorkspace {
+	  +Shared Forensics Tools
+	  +Collaborative Analysis
+	}
+	
+	object AnalyticKnowledgeBase {
+	  +Frontend: ServiceNow
+	  +Backend: AWS S3
+	}
+	
+	Customer --> ServiceNowTicket : creates
+	ServiceNowTicket --> Tier1Analyst : reviewed by
+	Tier1Analyst --> CyberCaseManager : assigned to
+	CyberCaseManager --> Tier2Analyst : assigned to
+	Tier2Analyst --> Databricks : uses
+	Tier2Analyst --> AWSAnalyticWorkspace : uses
+	Tier2Analyst --> ServiceNowTicket : updates
+	Tier2Analyst --> AnalyticKnowledgeBase : archives artifacts
+	Tier2Analyst --> ProductionStaff : handoff ticket
+	ProductionStaff --> ServiceNowTicket : finalize and close
+	ProductionStaff --> Customer : notify results
+	ProductionStaff --> AnalyticKnowledgeBase : archive final product
+
+@enduml

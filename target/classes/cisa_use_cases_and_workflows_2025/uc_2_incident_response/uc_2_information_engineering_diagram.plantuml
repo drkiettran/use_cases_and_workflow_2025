@@ -1,0 +1,48 @@
+@startuml
+	title Incident Response Workflow - Information Engineering Diagram
+	
+	!define RECTANGLE class
+	
+	RECTANGLE "CISA Customer" as Customer
+	RECTANGLE "Tier 1 Analyst" as T1
+	RECTANGLE "Cyber Case Manager (CCM)" as CCM
+	RECTANGLE "Tier 2 Analyst" as T2
+	RECTANGLE "Production Staff" as Prod
+	RECTANGLE "ServiceNow (SN)" as SN
+	RECTANGLE "Databricks" as DB
+	RECTANGLE "AWS Analytic Workspace" as AWS
+	RECTANGLE "Analytic Knowledge Base\n(ServiceNow + AWS S3)" as AKB
+	
+	' Step 1 - Ticket creation
+	Customer --> SN : Request IR assistance (Web/Helpdesk)
+	SN --> T1 : Notify Tier 1 analyst
+	
+	' Step 2 - Tier 1 collection and assignment
+	T1 --> Customer : Follow up for critical info
+	T1 --> SN : Update ticket with info
+	T1 --> CCM : Assign ticket
+	
+	' Step 3 - Cyber Case Manager actions
+	CCM --> Customer : Schedule scoping call
+	CCM --> SN : Validate access & legal agreements
+	CCM --> SN : Plan data collection (if ongoing intrusion)
+	CCM --> T2 : Assign IR lead / Tier 2 analyst
+	
+	' Step 4 - Tier 2 forensic analysis
+	T2 --> SN : Review ticket info
+	T2 --> Customer : Request access, deploy sensors/agents
+	Customer --> SN : Upload network/endpoint/EDR data
+	SN --> DB : Send data for triage
+	DB --> T2 : Provide triage analytics results
+	T2 --> AWS : Conduct forensic analysis
+	T2 --> SN : Populate report template, update ticket
+	T2 --> Prod : Hand off ticket
+	T2 --> AKB : Archive analysis artifacts
+	
+	' Step 5 - Production staff workflow
+	SN --> Prod : Notify ticket assignment
+	Prod --> SN : Review, trigger workflow
+	Prod --> SN : Generate product & collateral (LLM/templates)
+	Prod --> SN : Close workflow + ticket
+
+@enduml

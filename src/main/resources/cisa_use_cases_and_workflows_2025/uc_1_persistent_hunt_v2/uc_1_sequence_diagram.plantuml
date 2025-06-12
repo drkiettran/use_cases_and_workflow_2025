@@ -1,0 +1,48 @@
+@startuml
+	title Sequence Diagram: Adversary Detection and Response Lifecycle
+	
+	actor "CISA/Industry Entity" as Reporter
+	participant "Tier 3 Analyst" as T3
+	participant "Elastic/Databricks" as Platform
+	participant "SIEM Dashboard (Elastic)" as SIEM
+	participant "ServiceNow" as SN
+	participant "Tier 1 Analyst" as T1
+	participant "Tier 2 Analyst" as T2
+	participant "Production Staff" as Prod
+	participant "Analytic Knowledge Base (ServiceNosw/AWS S3)" as KB
+	
+	' Stage 1: Adversary TTP Observation and Analytic Creation
+	Reporter -> T3: Report new adversary TTP
+	T3 -> Platform: Develop detection analytic
+	
+	' Stage 2: Detection Execution and Alerting
+	Platform -> Platform: Run analytic on visibility data
+	Platform -> SIEM: Generate alert
+	SIEM -> SN: Auto-triage alerts, create ticket if critical
+	
+	' Stage 3: Tier 1 Analyst Triage
+	SN -> T1: Notify of new ticket
+	T1 -> SIEM: Investigate and pivot across datasets
+	T1 -> SN: Annotate and reassign ticket to Tier 2 or close
+	
+	' Stage 4: Tier 2 Analyst Deep Analysis
+	SN -> T2: Notify of reassigned ticket
+	T2 -> Platform: Query full datasets (Elastic, Databricks)
+	T2 -> T2: Develop notebooks and execute advanced queries
+	T2 -> SN: Reassign ticket to Tier 3 or Production, or close
+	T2 -> KB: Archive artifacts (via ServiceNow/AWS S3)
+	
+	' Stage 5: Production Development
+	SN -> Prod: Notify Production Staff
+	Prod -> SN: Kick off workflow for automated product template
+	Prod -> Prod: Finalize and stage content (collateral, LLM-generated)
+	Prod -> SN: Close ticket and workflow
+	
+	' Stage 6: Tier 3 Analyst Enhancements
+	SN -> T3: Notify of backlog ticket
+	T3 -> Platform: Use ticket data to improve models
+	T3 -> Platform: Deploy updated detection analytic
+	T3 -> SN: Close out ticket
+	T3 -> KB: Archive updated detection content
+
+@enduml

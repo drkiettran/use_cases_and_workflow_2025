@@ -1,0 +1,77 @@
+@startuml
+	title Information Engineering Diagram: Persistent Hunt Implementation
+	
+	' Entity Definitions
+	entity "Threat Hypothesis" {
+	  * Hypothesis_ID : UUID
+	  * Description : Text
+	  * Source : String
+	  * Created_By : Analyst_ID
+	  * Created_At : Timestamp
+	}
+	
+	entity "Telemetry Data" {
+	  * Telemetry_ID : UUID
+	  * Source : Enum(Network, Host, Cloud, App)
+	  * Data_Type : String
+	  * Timestamp : DateTime
+	  * Parsed : Boolean
+	}
+	
+	entity "Detection Analytic" {
+	  * Analytic_ID : UUID
+	  * Name : String
+	  * Platform : Enum(Elastic, Databricks)
+	  * Version : String
+	  * Created_By : Analyst_ID
+	  * Last_Updated : Timestamp
+	}
+	
+	entity "Hunt Session" {
+	  * Session_ID : UUID
+	  * Hypothesis_ID : UUID
+	  * Start_Time : Timestamp
+	  * End_Time : Timestamp
+	  * Outcome : Enum(Confirmed, Inconclusive, No Finding)
+	}
+	
+	entity "Suspicious Event" {
+	  * Event_ID : UUID
+	  * Source : String
+	  * Severity : Enum(Low, Medium, High, Critical)
+	  * Linked_Session : UUID
+	  * Investigated : Boolean
+	}
+	
+	entity "Analyst" {
+	  * Analyst_ID : UUID
+	  * Name : String
+	  * Role : Enum(Tier1, Tier2, Tier3)
+	  * Skillset : Text
+	}
+	
+	entity "Artifact" {
+	  * Artifact_ID : UUID
+	  * Type : Enum(Script, Notebook, Query, Dashboard)
+	  * Author : Analyst_ID
+	  * Linked_Session : UUID
+	  * Storage_Location : URL
+	}
+	
+	entity "Analytic KB" {
+	  * KB_ID : UUID
+	  * Artifact_ID : UUID
+	  * Metadata : Map
+	  * Visibility : Enum(Internal, Shared, Public)
+	}
+	
+	' Relationships
+	"Hunt Session" }o--|| "Threat Hypothesis" : generates
+	"Hunt Session" ||--o{ "Suspicious Event" : detects
+	"Suspicious Event" }o--|| "Telemetry Data" : originates from
+	"Hunt Session" }o--o{ "Detection Analytic" : executes
+	"Artifact" }o--|| "Analyst" : created by
+	"Artifact" }o--|| "Hunt Session" : documented in
+	"Analytic KB" }o--|| "Artifact" : catalogs
+
+@enduml

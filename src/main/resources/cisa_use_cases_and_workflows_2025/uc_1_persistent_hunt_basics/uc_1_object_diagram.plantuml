@@ -1,0 +1,70 @@
+@startuml
+	title Object Diagram: Persistent Hunt in Detection Environment
+	
+	object ThreatIntelFeed_MITRE_ATTACK {
+	  TTP = "T1059 - Command and Scripting Interpreter"
+	  IOC_Count = 12
+	  Source = "CISA & Mandiant"
+	}
+	
+	object TelemetryStream_EndpointLogs {
+	  Volume = "30GB/day"
+	  Sources = ["CrowdStrike", "Sysmon"]
+	  Format = "JSON"
+	}
+	
+	object DataLakeQuery_JupyterNotebook {
+	  Query = "Identify anomalous PowerShell execution"
+	  Status = "Running"
+	  Tool = "Databricks"
+	}
+	
+	object DetectionRule_SigmaRule_PowerShellSuspicious {
+	  RuleID = "SR-3245"
+	  Status = "Enabled"
+	  MatchedEvents = 5
+	}
+	
+	object DetectionAlert_Alert_5678 {
+	  Rule = "SR-3245"
+	  Timestamp = "2025-06-04 13:10"
+	  Severity = "High"
+	}
+	
+	object HuntAnalyst_Tier3 {
+	  AnalystID = "T3-Analyst-001"
+	  Specialization = "Adversary Behavior Modeling"
+	}
+	
+	object ServiceNowTicket_TKT_91342 {
+	  Priority = "High"
+	  AssignedTo = "Tier2"
+	  Status = "In Progress"
+	}
+	
+	object KBArtifact_HuntNotebook_20250604 {
+	  Source = "Databricks"
+	  LinkedTicket = "TKT-91342"
+	  ArchivedTo = "AWS S3"
+	}
+	
+	' Relationships
+	ThreatIntelFeed_MITRE_ATTACK --> DetectionRule_SigmaRule_PowerShellSuspicious
+	TelemetryStream_EndpointLogs --> DataLakeQuery_JupyterNotebook
+	DataLakeQuery_JupyterNotebook --> DetectionRule_SigmaRule_PowerShellSuspicious
+	DetectionRule_SigmaRule_PowerShellSuspicious --> DetectionAlert_Alert_5678
+	DetectionAlert_Alert_5678 --> ServiceNowTicket_TKT_91342
+	HuntAnalyst_Tier3 --> DataLakeQuery_JupyterNotebook
+	HuntAnalyst_Tier3 --> KBArtifact_HuntNotebook_20250604
+	ServiceNowTicket_TKT_91342 --> KBArtifact_HuntNotebook_20250604
+
+	' "ThreatIntelFeed : MITRE_ATT&CK" --> "DetectionRule : SigmaRule_PowerShellSuspicious"
+	' "TelemetryStream : EndpointLogs" --> "DataLakeQuery : JupyterNotebook"
+	' "DataLakeQuery : JupyterNotebook" --> "DetectionRule : SigmaRule_PowerShellSuspicious"
+	' "DetectionRule : SigmaRule_PowerShellSuspicious" --> "DetectionAlert : Alert_5678"
+	' "DetectionAlert : Alert_5678" --> "ServiceNowTicket : TKT-91342"
+	' "HuntAnalyst : Tier3" --> "DataLakeQuery : JupyterNotebook"
+	' "HuntAnalyst : Tier3" --> "KBArtifact : HuntNotebook-20250604"
+	' "ServiceNowTicket : TKT-91342" --> "KBArtifact : HuntNotebook-20250604"
+
+@enduml

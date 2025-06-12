@@ -1,0 +1,75 @@
+@startuml
+	title Deployment Diagram - CISA Incident Response Use Case
+	
+	node "Customer Environment" {
+	  node "Customer Network" {
+	    [EDR Agents]
+	    [Forensic Imaging Tools]
+	    [Network TAP/SPAN]
+	  }
+	
+	  [Cloud Services (Azure/AWS/Google)] as Cloud
+	}
+	
+	node "ServiceNow Platform" {
+	  [IR Ticketing Module]
+	  [Workflow Engine]
+	  [Automated Report Templates]
+	}
+	
+	node "CISA Ops Environment" {
+	  node "Data Storage" {
+	    [Warm Storage]
+	  }
+	
+	  node "Analytics Layer" {
+	    [Databricks]
+	    [AWS Analytic Workspace]
+	    [Canned Analytics]
+	  }
+	
+	  [SIEM Integration]
+	}
+	
+	node "Analyst Workstations" {
+	  [Tier 1 Analyst]
+	  [Tier 2 Analyst]
+	  [Tier 3 Analyst]
+	  [Cyber Case Manager]
+	  [Production Staff]
+	}
+	
+	node "Analytic Knowledge Base" {
+	  [ServiceNow Front-End]
+	  [AWS S3 Artifact Archive]
+	}
+	
+	' Connections and Deployments
+	[EDR Agents] --> [Warm Storage] : Upload forensic data
+	[Forensic Imaging Tools] --> [Warm Storage]
+	[Network TAP/SPAN] --> [SIEM Integration]
+	
+	[IR Ticketing Module] --> [Tier 1 Analyst]
+	[IR Ticketing Module] --> [Cyber Case Manager]
+	[Workflow Engine] --> [Tier 2 Analyst]
+	[Workflow Engine] --> [Production Staff]
+	
+	[Tier 2 Analyst] --> [Databricks]
+	[Tier 2 Analyst] --> [AWS Analytic Workspace]
+	[Tier 2 Analyst] --> [ServiceNow Front-End]
+	[Tier 2 Analyst] --> [Automated Report Templates]
+	
+	[Tier 3 Analyst] --> [Databricks]
+	[Tier 3 Analyst] --> [Canned Analytics]
+	
+	[Production Staff] --> [Workflow Engine]
+	[Production Staff] --> [Automated Report Templates]
+	
+	[Databricks] --> [Canned Analytics]
+	[Databricks] --> [Warm Storage]
+	[AWS Analytic Workspace] --> [Warm Storage]
+	
+	[Tier 2 Analyst] --> [AWS S3 Artifact Archive]
+	[Tier 3 Analyst] --> [AWS S3 Artifact Archive]
+
+@enduml

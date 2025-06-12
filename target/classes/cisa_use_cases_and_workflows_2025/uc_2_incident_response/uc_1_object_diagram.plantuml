@@ -1,0 +1,75 @@
+@startuml
+	title Object Diagram: Detection Analytic Lifecycle
+	
+	object AdversaryTTP {
+	  +source: CISA / Industry
+	  +status: Observed
+	}
+	
+	object DetectionAnalytic {
+	  +createdBy: Tier3Analyst
+	  +platform: Elastic / Databricks
+	  +status: Deployed
+	}
+	
+	object VisibilityData {
+	  +sources: Network, Endpoints, Logs
+	}
+	
+	object DetectionAlert {
+	  +source: DetectionAnalytic
+	  +aggregatedIn: Elastic Dashboard
+	  +status: Triaged
+	}
+	
+	object SIEMDashboard {
+	  +type: Elastic
+	  +view: Tier1Analyst
+	}
+	
+	object ServiceNowTicket {
+	  +status: Open/Closed
+	  +escalatedTo: Tier2, Tier3, Production
+	}
+	
+	object Tier1Analyst {
+	  +tools: Elastic, ServiceNow
+	}
+	
+	object Tier2Analyst {
+	  +tools: Databricks, Elastic, ServiceNow
+	  +actions: Investigate, Assign, Archive
+	}
+	
+	object Tier3Analyst {
+	  +tools: Elastic, Databricks, ServiceNow
+	  +actions: Model, Deploy, Archive
+	}
+	
+	object ProductionStaff {
+	  +tools: ServiceNow, LLM Templates
+	  +actions: Finalize, Publish
+	}
+	
+	object AnalyticKnowledgeBase {
+	  +frontend: ServiceNow / SharePoint
+	  +backend: AWS S3
+	}
+	
+	AdversaryTTP --> DetectionAnalytic : "used to create"
+	DetectionAnalytic --> VisibilityData : "runs on"
+	DetectionAnalytic --> DetectionAlert : "triggers"
+	DetectionAlert --> SIEMDashboard : "sent to"
+	SIEMDashboard --> Tier1Analyst : "used by"
+	Tier1Analyst --> ServiceNowTicket : "creates/updates"
+	ServiceNowTicket --> Tier2Analyst : "assigned to"
+	Tier2Analyst --> AnalyticKnowledgeBase : "archives to"
+	Tier2Analyst --> ServiceNowTicket : "reassigns to Tier3 or Production"
+	ServiceNowTicket --> ProductionStaff : "notifies"
+	ProductionStaff --> ServiceNowTicket : "completes and closes"
+	ServiceNowTicket --> Tier3Analyst : "notifies"
+	Tier3Analyst --> DetectionAnalytic : "develops new"
+	Tier3Analyst --> AnalyticKnowledgeBase : "archives"
+	Tier3Analyst --> ServiceNowTicket : "closes"
+
+@enduml

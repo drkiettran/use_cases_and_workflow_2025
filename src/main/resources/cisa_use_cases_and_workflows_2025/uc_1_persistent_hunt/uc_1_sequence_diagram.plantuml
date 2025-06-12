@@ -1,0 +1,44 @@
+
+@startuml
+	title Threat Detection and Response Workflow - Sequence Diagram
+	
+	actor "CISA / Industry" as Source
+	actor "Tier 3 Analyst" as T3
+	actor "Elastic / Databricks" as Platform
+	actor "SIEM Dashboard (Elastic)" as SIEM
+	actor "ServiceNow" as SN
+	actor "Tier 1 Analyst" as T1
+	actor "Tier 2 Analyst" as T2
+	actor "Production Staff" as Prod
+	actor "Analytic Knowledge Base" as KB
+	
+	Source -> T3: Report new TTP
+	T3 -> Platform: Develop detection analytic
+	Platform -> Platform: Run detection on visibility data
+	Platform -> SIEM: Generate detection alert
+	SIEM -> SN: Send alert + auto-triage
+	SN -> SN: Optionally create critical ticket
+	SN -> T1: Notify Tier 1 of ticket
+	
+	T1 -> Platform: Investigate and pivot (Elastic)
+	T1 -> SN: Update ticket with links
+	T1 -> T2: Assign ticket or close
+	
+	SN -> T2: Notify Tier 2 of ticket
+	T2 -> Platform: Query relevant data (Databricks)
+	T2 -> Platform: Query across systems (Elastic)
+	T2 -> SN: Assign to T3 or Production, or close
+	T2 -> KB: Archive artifacts (links to S3)
+	
+	SN -> Prod: Notify Production Staff
+	Prod -> SN: Launch product workflow
+	Prod -> SN: Finalize and stage release
+	Prod -> SN: Close production and ticket workflows
+	
+	SN -> T3: Notify Tier 3 of ticket
+	T3 -> Platform: Develop further models (Elastic)
+	T3 -> Platform: Additional queries/models (Databricks)
+	T3 -> SN: Close ticket
+	T3 -> KB: Archive artifacts
+
+@enduml

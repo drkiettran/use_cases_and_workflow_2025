@@ -1,0 +1,57 @@
+@startuml
+	title Incident Response - Activity Diagram
+	
+	|CISA Customer|
+	start
+	:Request IR assistance;
+	note right: via web intake or help desk
+	|ServiceNow|
+	:create ticket (automated or manual);
+	
+	|Tier 1 Analyst|
+	:Review ticket;
+	:Contact customer for info;
+	:Add info to ticket;
+	:Assign ticket to Cyber Case Manager;
+	
+	|Cyber Case Manager|
+	:Review ticket;
+	if (Scoping call needed?) then (yes)
+	  :Schedule scoping call;
+	  :Verify data availability;
+	  if (Non-federal entity?) then (yes)
+	    :Check for legal agreements;
+	  endif
+	endif
+	if (Active intrusion?) then (yes)
+	  :Plan additional data collection;
+	endif
+	:Assign ticket to Tier 2 Analyst or IR Lead;
+	
+	|Tier 2 Analyst|
+	:Review ticket;
+	:Access customer data (Cloud, Network, Host);
+	:Ensure access rights (Accounts, EDR, TAP/SPAN);
+	:Ingest forensic data into SIEM;
+	:Upload to warm storage;
+	:Run canned analytics (Databricks);
+	:Label data for ML;
+	
+	:Review triage results;
+	:Use Databricks + AWS for forensics;
+	:Capture incident summary in ticket;
+	note right: Auto-populates report template
+	
+	:Handoff ticket to Production staff;
+	:Catalog artifacts into Analytic Knowledge Base;
+	
+	|Production Staff|
+	:Review ticket and analysis;
+	:Start report template workflow;
+	:Notify collaborators (internal/external);
+	:Finalize and stage product (ServiceNow);
+	:Generate collateral using LLM;
+	:Close Production and Ticket workflows;
+	
+	stop
+@enduml

@@ -1,0 +1,65 @@
+@startuml
+	title Component Diagram: Adversary TTP Detection and Response Workflow
+	left to right direction
+	package "External Observers" {
+	  actor :CISA Responders:
+	  actor :Industry Partners:
+	  actor :Other Entities:
+	
+	  ' [CISA Responders]
+	  ' [Industry Partners]
+	  ' [Other Entities]
+	}
+	
+	package "Security Operations Environment" {
+	  [Elastic Platform] as Elastic
+	  [Databricks Platform] as Databricks
+	  [ServiceNow Platform] as ServiceNow
+	  [SIEM Dashboard (Elastic)] as SIEM
+	  [AWS S3] as S3
+	  [Analytic Knowledge Base\n(ServiceNow Front-End)] as AKB
+	}
+	
+	package "Actors" {
+		actor :Tier 1 Analyst:
+		actor :Tier 2 Analyst:
+		actor :Tier 3 Analyst:
+		actor :Production Staff:
+	  ' [Tier 1 Analyst]
+	  ' [Tier 2 Analyst]
+	  ' [Tier 3 Analyst]
+	  ' [Production Staff]
+	}
+	
+	' Flow start
+	[CISA Responders] --> [Tier 3 Analyst] : Observed TTPs
+	[Industry Partners] --> [Tier 3 Analyst]
+	[Other Entities] --> [Tier 3 Analyst]
+	
+	[Tier 3 Analyst] --> Elastic : Create Detection Analytic
+	[Tier 3 Analyst] --> Databricks : (Optional) Create Analytic
+	Elastic --> SIEM : Send Detection Alerts
+	SIEM --> ServiceNow : Alert → Ticket (if critical)
+	
+	[Tier 1 Analyst] --> ServiceNow : View Ticket Queue
+	[Tier 1 Analyst] --> Elastic : Investigate and Pivot
+	[Tier 1 Analyst] --> ServiceNow : Assign or Close Ticket
+	
+	[Tier 2 Analyst] --> ServiceNow : Receive & Investigate Ticket
+	[Tier 2 Analyst] --> Databricks : Query Records
+	[Tier 2 Analyst] --> Elastic : Query Logs
+	[Tier 2 Analyst] --> AKB : Archive Analysis
+	AKB --> S3 : Store Artifacts
+	[Tier 2 Analyst] --> ServiceNow : Assign to Tier 3 or Production
+	
+	[Production Staff] --> ServiceNow : Receive Ticket
+	[Production Staff] --> ServiceNow : Trigger Product Workflow
+	[Production Staff] --> ServiceNow : Finalize and Close Workflow
+	
+	[Tier 3 Analyst] --> ServiceNow : Receive Ticket
+	[Tier 3 Analyst] --> Elastic : Develop Additional Detection
+	[Tier 3 Analyst] --> Databricks
+	[Tier 3 Analyst] --> ServiceNow : Close Ticket
+	[Tier 3 Analyst] --> AKB : Archive Artifacts
+
+@enduml

@@ -1,0 +1,83 @@
+@startuml
+	title Incident Response - Class Diagram (CISA Use Case)
+	
+	' Define key actors and systems
+	class "CISA Customer" {
+	  +requestIncidentResponse()
+	}
+	
+	class "ServiceNow Ticket" {
+	  +ticketID: String
+	  +status: String
+	  +createdDate: Date
+	  +criticalInfo: String
+	  +assignTo(role)
+	  +updateStatus()
+	}
+	
+	class "Tier 1 Analyst" {
+	  +reviewTicket()
+	  +collectCriticalInfo()
+	  +assignToCCM()
+	}
+	
+	class "Cyber Case Manager" {
+	  +reviewTicket()
+	  +scheduleScopingCall()
+	  +assignToIRLead()
+	  +planDataCollection()
+	}
+	
+	class "Tier 2 Analyst" {
+	  +analyzeCloudNetworkHostData()
+	  +performForensics()
+	  +documentFindings()
+	  +handoffToProduction()
+	  +archiveArtifacts()
+	}
+	
+	class "Production Staff" {
+	  +generateReport()
+	  +finalizeProduct()
+	  +closeTicket()
+	}
+	
+	class "Analytic Knowledge Base" {
+	  +catalogArtifact()
+	}
+	
+	class "Databricks" {
+	  +runTriageAnalytics()
+	  +supportForensics()
+	}
+	
+	class "AWS Analytic Workspace" {
+	  +supportSharedAnalysis()
+	}
+	
+	class "EDR Agent" {
+	  +deployToEndpoints()
+	}
+	
+	class "Network Sensor" {
+	  +deployToNetwork()
+	}
+	
+	' Associations
+	"CISA Customer" --> "ServiceNow Ticket" : initiates →
+	"Tier 1 Analyst" --> "ServiceNow Ticket" : updates →
+	"Tier 1 Analyst" --> "Cyber Case Manager" : assigns →
+	"Cyber Case Manager" --> "ServiceNow Ticket" : updates →
+	"Cyber Case Manager" --> "Tier 2 Analyst" : assigns →
+	"Tier 2 Analyst" --> "ServiceNow Ticket" : populates findings →
+	"Tier 2 Analyst" --> "Databricks" : uses →
+	"Tier 2 Analyst" --> "AWS Analytic Workspace" : uses →
+	"Tier 2 Analyst" --> "Analytic Knowledge Base" : archives →
+	"Tier 2 Analyst" --> "Production Staff" : hands off →
+	"Production Staff" --> "ServiceNow Ticket" : finalizes →
+	"Production Staff" --> "Analytic Knowledge Base" : catalogs →
+	"Databricks" --> "ServiceNow Ticket" : populates triage results →
+	"EDR Agent" --> "CISA Customer" : deployed to →
+	"Network Sensor" --> "CISA Customer" : deployed to →
+
+@enduml

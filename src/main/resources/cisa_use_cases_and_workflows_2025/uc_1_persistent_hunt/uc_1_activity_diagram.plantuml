@@ -1,0 +1,73 @@
+@startuml
+title Activity Diagram: Adversary Detection and Response Workflow
+
+|CISA/Industry|
+start
+:Observe/Report Adversary TTP;
+stop
+
+|Tier 3 Analyst|
+start
+:Create Detection Analytic;
+note right: Using Elastic or Databricks
+stop
+
+|Automation|
+start
+:Run Analytic on Visibility Data;
+:Generate Alert;
+:Send Alert to Elastic Dashboard;
+if (Critical Threshold?) then (yes)
+  :Create Ticket in ServiceNow;
+endif
+stop
+
+|Tier 1 Analyst|
+start
+:Review Alert in Dashboard;
+:Investigate in Elastic;
+:Pivot Across Datasets;
+:Link Evidence in ServiceNow Ticket;
+if (Escalation Needed?) then (yes)
+  :Assign Ticket to Tier 2;
+else
+  :Close Ticket;
+endif
+stop
+
+|Tier 2 Analyst|
+start
+:Review Ticket in ServiceNow;
+:Pivot to Databricks Full Records;
+:Query Elastic & Databricks;
+:Complete Investigation;
+if (Further Action?) then (yes)
+  :Assign to Tier 3 or Production;
+else
+  :Close Ticket;
+endif
+:Catalog Artifacts;
+:Archive to Analytic KB;
+note right: Front-end: ServiceNow\nBack-end: AWS S3
+stop
+
+|Production Staff|
+start
+:Review Assigned Ticket;
+:Develop Product (LLM + Template);
+:Start Workflow in ServiceNow;
+:Coordinate with CISA Partners;
+:Stage & Release Product;
+:Close Production & Ticket Workflows;
+stop
+
+|Tier 3 Analyst|
+start
+:Review Ticket;
+:Pivot to Elastic/Databricks;
+:Develop & Deploy New Detection Analytic;
+:Close Ticket;
+:Catalog and Archive Artifacts;
+stop
+
+@enduml

@@ -1,0 +1,59 @@
+@startuml
+	title State Diagram: Detection Analytic Lifecycle
+	
+	[*] --> Observed
+	
+	state Observed {
+	  [*] --> New_TTP_detected_by_CISA_or_industry
+	}
+	
+	Observed --> Analytic_Development : Assigned to Tier 3
+	Analytic_Development : Create detection analytic\n(Elastic/Databricks)
+	
+	Analytic_Development --> Deployed : Analytic deployed\ninto pipeline
+	
+	state Deployed {
+	  Runs_on_visibility_data --> Generates_alerts
+	}
+	
+	Deployed --> Triaged : Alert sent to SIEM\nAuto-triage triggered
+	
+	state Triaged {
+	  [*] --> Alert_score_evaluated
+	}
+	
+	Triaged --> Ticketed : Critical alert\nauto-generates ServiceNow ticket
+	Triaged --> Archived : Below threshold;\nno action taken
+	
+	Ticketed --> Tier1_Investigation : Assigned to Tier 1 Analyst
+	
+	state Tier1_Investigation {
+	  Investigate_via_Elastic --> Assign_or_Close_via_ServiceNow
+	}
+	
+	Tier1_Investigation --> Tier2_Investigation : Escalate to Tier 2
+	
+	state Tier2_Investigation {
+	  Pivot_in_Elastic_and_Databricks --> Archive_artifacts
+	  Archive_artifacts --> Assign_to_Tier_3_or_Production
+	}
+	
+	Tier2_Investigation --> Closed : Ticket closed
+	Tier2_Investigation --> Production_Review : Assigned to Production Staff
+	Tier2_Investigation --> Tier3_Enhancement : Assigned to Tier 3 for model upgrade
+	
+	state Production_Review {
+	  Product_template_created --> Collateral_prepared_LLM
+	}
+	
+	Production_Review --> Closed : Product released
+	
+	state Tier3_Enhancement {
+	  Enhance_and_redeploy_analytic --> Update_knowledge_base
+	}
+	
+	Tier3_Enhancement --> Closed : Ticket closed
+	
+	Closed --> Archived : All artifacts stored\n(ServiceNow/S3)
+
+@enduml

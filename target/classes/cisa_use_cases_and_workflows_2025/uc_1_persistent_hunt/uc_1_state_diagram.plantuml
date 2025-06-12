@@ -1,0 +1,74 @@
+@startuml
+	title Detection Analytic Workflow - State Diagram
+	
+	[*] --> AdversaryObserved
+	
+	state AdversaryObserved {
+	  [*] --> NewTTPDetected
+	  NewTTPDetected --> CreateDetectionAnalytic
+	}
+	
+	CreateDetectionAnalytic --> AnalyticDeployed
+	AnalyticDeployed : Created by Tier 3 in Elastic/Databricks
+	
+	AnalyticDeployed --> AnalyticRunning
+	AnalyticRunning : Runs on visibility data
+	
+	AnalyticRunning --> AlertGenerated
+	AlertGenerated : Alert sent to SIEM dashboard (Elastic)
+	
+	AlertGenerated --> AutoTriage
+	AutoTriage : Similar alerts aggregated
+	
+	AutoTriage --> TicketCreated : Critical threshold met
+	AutoTriage --> AnalystInvestigation : Non-critical
+	
+	TicketCreated --> AnalystInvestigation
+	
+	state AnalystInvestigation {
+	  [*] --> Tier1Investigation
+	  Tier1Investigation : Uses Elastic & ServiceNow
+	  Tier1Investigation --> Tier2Investigation : Assigns ticket
+	  Tier1Investigation --> TicketClosed : May close ticket
+	}
+	
+	Tier2Investigation : Uses Databricks, Elastic, ServiceNow
+	Tier2Investigation --> Tier3Backlog : Assigns to Tier 3
+	Tier2Investigation --> ProductionBacklog : Assigns to Production
+	Tier2Investigation --> TicketClosed
+	Tier2Investigation --> ArchiveArtifacts : Stores in KB
+	
+	Tier3Backlog --> Tier3Investigation
+	
+	state Tier3Investigation {
+	  [*] --> ModelDevelopment
+	  ModelDevelopment --> DeployNewModel : In Elastic/Databricks
+	  DeployNewModel --> ArchiveArtifacts
+	  DeployNewModel --> TicketClosed
+	}
+	
+	ProductionBacklog --> ProductionReview
+	
+	state ProductionReview {
+	  [*] --> ProductDevelopment
+	  ProductDevelopment --> FinalizeProduct
+	  FinalizeProduct --> ReleaseStaging
+	  ReleaseStaging --> CloseProductionTicket
+	}
+	
+	ArchiveArtifacts --> [*]
+	TicketClosed --> [*]
+	CloseProductionTicket --> [*]
+	
+	legend left
+	| **State**                                     | **Description**|
+	| AdversaryObserved → \nCreateDetectionAnalytic | TTP observed, analyst develops detection logic.|
+	| AnalyticRunning                               | Analytic runs on logs, creates alerts.|
+	| AutoTriage → TicketCreated                  | Events triaged, critical ones generate tickets.|
+	| AnalystInvestigation                          | Tier 1 & Tier 2 analysts investigate using Elastic,\n ServiceNow, and Databricks.|
+	| Tier3Investigation                            | Develops enhanced models and pushes new analytics.|
+	| ProductionReview                              | Final products and reports are developed and released.|
+	
+	end legend
+
+@enduml

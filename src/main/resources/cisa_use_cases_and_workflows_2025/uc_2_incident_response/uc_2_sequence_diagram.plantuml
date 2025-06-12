@@ -1,0 +1,60 @@
+@startuml
+	title Incident Response Sequence Diagram
+	
+	actor "CISA Customer" as Customer
+	participant "ServiceNow" as SN
+	participant "Tier 1 Analyst" as T1
+	participant "Cyber Case Manager" as CCM
+	participant "Tier 2 Analyst" as T2
+	participant "Databricks / AWS Workspace" as Analysis
+	participant "Production Staff" as Prod
+	database "Analytic Knowledge Base\n(AWS S3 + ServiceNow)" as AKB
+	
+	' Step 1: Ticket Creation
+	Customer -> SN : Submit IR request (web/help desk)
+	SN -> T1 : Notify new IR ticket
+	
+	' Step 2: T1 collects information
+	T1 -> Customer : Request additional info
+	Customer --> T1 : Provide details
+	T1 -> SN : Update ticket with critical info
+	T1 -> CCM : Assign ticket to CCM
+	
+	' Step 3: CCM scoping
+	CCM -> SN : Review ticket
+	CCM -> Customer : Schedule scoping call
+	note right of CCM
+	Check for legal agreements
+	and data accessibility
+	end note
+	
+	' Step 4: If active intrusion
+	CCM -> Customer : Plan for data collection deployment
+	CCM -> SN : Assign ticket to IR lead / Tier 2
+	
+	' Step 5: Tier 2 Analysis
+	T2 -> SN : Review ticket
+	T2 -> Customer : Request cloud/network access
+	note right of T2
+	Deploy network sensors, EDR agents,
+	triage or forensic images as needed
+	end note
+	
+	Customer -> Analysis : Upload data to CISA warm storage
+	Analysis -> T2 : Run canned triage analytics
+	T2 -> Analysis : Conduct forensic analysis (Databricks, AWS tools)
+	T2 -> SN : Document incident findings (auto-populates report)
+	T2 -> Prod : Hand off ticket to Production
+	T2 -> AKB : Archive analysis artifacts
+	
+	' Step 6: Production Workflow
+	Prod -> SN : Review ticket + analysis
+	Prod -> SN : Start report generation workflow
+	note right of Prod
+	Auto-template creation using LLM and
+	ticket data, notify collaborators
+	end note
+	Prod -> SN : Finalize and stage release
+	Prod -> SN : Close ticket + production workflow
+
+@enduml

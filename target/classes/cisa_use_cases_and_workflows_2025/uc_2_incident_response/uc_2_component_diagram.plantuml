@@ -1,0 +1,63 @@
+@startuml
+	title CISA Incident Response - Component Diagram
+	left to right direction
+	
+	' Define actors
+	actor "CISA Customer" as Customer
+	actor "Help Desk" as HelpDesk
+	actor "Tier 1 Analyst" as T1
+	actor "Cyber Case Manager (CCM)" as CCM
+	actor "Tier 2 Analyst" as T2
+	actor "Production Staff" as Prod
+	
+	package "CISA Ops Environment" {
+	    [ServiceNow] as SN
+	    [Databricks] as DB
+	    [AWS Analytic Workspace] as AWSWS
+	    [Warm Storage] as WarmStore
+	    [Analytic Knowledge Base] as AKB
+	}
+	
+	' Define external systems and tools
+	[Network TAP / SPAN Devices] as NetSensors
+	[EDR Agents] as EDR
+	[Forensic Imaging Tools] as ForensicTools
+	
+	' Customer initiates request
+	Customer --> SN : Request IR Assistance\n(web intake or Help Desk)
+	
+	' Help desk may manually create ticket
+	HelpDesk --> SN : Create Ticket
+	
+	' Tier 1 Workflow
+	SN --> T1 : Ticket Assigned
+	T1 --> Customer : Collect Critical Info
+	T1 --> SN : Update Ticket
+	T1 --> CCM : Assign Ticket
+	
+	' CCM Workflow
+	CCM --> Customer : Scoping Call\nConfirm Data Access
+	CCM --> SN : Update Ticket
+	CCM --> NetSensors : Plan Sensor Deployment
+	CCM --> T2 : Assign Ticket
+	
+	' Tier 2 Workflow
+	T2 --> SN : Review Ticket
+	T2 --> Customer : Access Cloud/Net/Host Logs
+	T2 --> NetSensors : Deploy Sensors
+	T2 --> EDR : Deploy EDR Agents
+	T2 --> ForensicTools : Acquire Forensic Images
+	T2 --> WarmStore : Upload Data
+	WarmStore --> DB : Trigger Triage Analytics
+	DB --> T2 : Triage Results
+	T2 --> AWSWS : Perform Full Analysis
+	T2 --> SN : Document Findings\nAuto-populate Report Template
+	T2 --> Prod : Assign Ticket for Final Product
+	T2 --> AKB : Archive Artifacts
+	
+	' Production Workflow
+	Prod --> SN : Review & Finalize Report
+	Prod --> SN : Initiate Workflow & Notify Stakeholders
+	Prod --> SN : Publish Final Report\nClose Workflow
+
+@enduml

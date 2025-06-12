@@ -1,0 +1,65 @@
+@startuml
+	title Component Diagram: Persistent Hunt in Detection Environment
+	
+	package "Data Sources" {
+	  [Endpoint Telemetry (EDR)]
+	  [Network Telemetry (Zeek/Suricata)]
+	  [Cloud Logs (AWS/GCP/Azure)]
+	  [Authentication Logs (Okta, AD)]
+	}
+	
+	package "Threat Intelligence" {
+	  [MITRE ATT&CK Matrix]
+	  [External TI Feeds]
+	  [IOC Repositories]
+	}
+	
+	package "Analytics & Processing" {
+	  [Log Aggregator (Elastic/Splunk)]
+	  [Data Lake (Databricks/Lakehouse)]
+	  [Detection Analytic Engine]
+	  [Machine Learning Models]
+	}
+	
+	package "Hunting Frameworks" {
+	  [Hunt Orchestration (Jupyter Notebooks)]
+	  [Threat Hypothesis Engine]
+	  [Behavioral Modeling (YARA/Sigma)]
+	}
+	
+	package "Knowledge & Case Mgmt" {
+	  [ServiceNow Ticketing]
+	  [Analytic Knowledge Base (AWS S3/SharePoint)]
+	}
+	
+	package "Security Operations" {
+	  [Tier 2/3 Analysts]
+	  [SOC Dashboard (SIEM)]
+	  [Incident Response Team]
+	}
+	
+	' Connections
+	[Endpoint Telemetry (EDR)] --> [Log Aggregator (Elastic/Splunk)]
+	[Network Telemetry (Zeek/Suricata)] --> [Log Aggregator (Elastic/Splunk)]
+	[Cloud Logs (AWS/GCP/Azure)] --> [Data Lake (Databricks/Lakehouse)]
+	[Authentication Logs (Okta, AD)] --> [Log Aggregator (Elastic/Splunk)]
+	
+	[External TI Feeds] --> [Detection Analytic Engine]
+	[MITRE ATT&CK Matrix] --> [Threat Hypothesis Engine]
+	[IOC Repositories] --> [Detection Analytic Engine]
+	
+	[Log Aggregator (Elastic/Splunk)] --> [Detection Analytic Engine]
+	[Data Lake (Databricks/Lakehouse)] --> [Machine Learning Models]
+	[Machine Learning Models] --> [Detection Analytic Engine]
+	
+	[Detection Analytic Engine] --> [SOC Dashboard (SIEM)]
+	[Detection Analytic Engine] --> [Hunt Orchestration (Jupyter Notebooks)]
+	[Detection Analytic Engine] --> [Behavioral Modeling (YARA/Sigma)]
+	
+	[Threat Hypothesis Engine] --> [Hunt Orchestration (Jupyter Notebooks)]
+	[Hunt Orchestration (Jupyter Notebooks)] --> [Tier 2/3 Analysts]
+	[Tier 2/3 Analysts] --> [ServiceNow Ticketing]
+	[Tier 2/3 Analysts] --> [Analytic Knowledge Base (AWS S3/SharePoint)]
+	[ServiceNow Ticketing] --> [Incident Response Team]
+
+@enduml

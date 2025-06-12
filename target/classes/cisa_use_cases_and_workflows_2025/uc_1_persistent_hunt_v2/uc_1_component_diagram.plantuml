@@ -1,0 +1,67 @@
+@startuml
+	title Component Diagram: Security Incident Detection and Response Workflow
+	
+	package "External Entities" {
+	  [CISA Responders]
+	  [Industry Partners]
+	}
+	
+	package "Detection Systems" {
+	  [Elastic Stack] <<component>>
+	  [Databricks Platform] <<component>>
+	  [Telemetry Sources] <<component>>
+	}
+	
+	package "Incident Management" {
+	  [ServiceNow] <<component>>
+	  [SIEM Dashboard] <<component>>
+	}
+	
+	package "Data Storage" {
+	  [AWS S3] <<database>>
+	  [Analytic Knowledge Base] <<component>>
+	}
+	
+	package "Users and Analysts" {
+	  [Tier 1 Analyst] <<actor>>
+	  [Tier 2 Analyst] <<actor>>
+	  [Tier 3 Analyst] <<actor>>
+	  [Production Staff] <<actor>>
+	}
+	
+	' External threat detection
+	[CISA Responders] --> [Elastic Stack] : Report TTP
+	[Industry Partners] --> [Elastic Stack]
+	
+	' Tier 3 develops detection
+	[Tier 3 Analyst] --> [Elastic Stack] : Create Detection Analytic
+	[Tier 3 Analyst] --> [Databricks Platform] : Advanced Analytic Dev
+	
+	' Analytics on telemetry
+	[Elastic Stack] --> [Telemetry Sources] : Ingest logs
+	[Elastic Stack] --> [SIEM Dashboard] : Push Alerts
+	
+	' Auto triage & ticketing
+	[SIEM Dashboard] --> [ServiceNow] : Create/Update Tickets
+	
+	' Tier 1 investigations
+	[Tier 1 Analyst] --> [Elastic Stack] : Investigate Event
+	[Tier 1 Analyst] --> [ServiceNow] : Update Ticket
+	
+	' Tier 2 investigations
+	[Tier 2 Analyst] --> [ServiceNow]
+	[Tier 2 Analyst] --> [Databricks Platform] : Run Notebooks
+	[Tier 2 Analyst] --> [Elastic Stack]
+	[Tier 2 Analyst] --> [AWS S3] : Archive Artifacts
+	[AWS S3] --> [Analytic Knowledge Base]
+	
+	' Tier 3 improvements
+	[Tier 3 Analyst] --> [ServiceNow]
+	[Tier 3 Analyst] --> [Databricks Platform]
+	[Tier 3 Analyst] --> [AWS S3] : Archive Models
+	
+	' Production workflow
+	[Production Staff] --> [ServiceNow] : Generate Product
+	[Production Staff] --> [AWS S3] : Use artifacts
+
+@enduml

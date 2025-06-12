@@ -1,0 +1,100 @@
+@startuml
+	title Class Diagram: Cybersecurity Detection and Response Workflow
+	
+	' Actors
+	class "Tier 1 Analyst" <<actor>> {
+	  +investigateEvent()
+	  +assignOrCloseTicket()
+	}
+	
+	class "Tier 2 Analyst" <<actor>>  {
+	  +continueInvestigation()
+	  +developQueries()
+	  +archiveArtifacts()
+	  +assignToTier3OrProd()
+	}
+	
+	class "Tier 3 Analyst"  <<actor>> {
+	  +createDetectionAnalytic()
+	  +developDetectionModels()
+	  +closeTicket()
+	  +catalogArtifacts()
+	}
+	
+	class "Production Staff"  <<actor>> {
+	  +reviewTicket()
+	  +developProduct()
+	  +finalizeAndRelease()
+	}
+	
+	' Systems
+	class "Elastic" <<system>> {
+	  +runDetectionAnalytic()
+	  +providePivotData()
+	  +displayDashboard()
+	}
+	
+	class "Databricks" <<system>> {
+	  +developNotebooks()
+	  +accessFullRecords()
+	  +runAnalytics()
+	}
+	
+	class "ServiceNow" <<system>> {
+	  +manageTickets()
+	  +notifyStakeholders()
+	  +triggerWorkflows()
+	}
+	
+	class "Analytic Knowledge Base" <<system>> {
+	  +archiveArtifacts()
+	  +provideAccess()
+	}
+	
+	class "AWS S3" <<system>> {
+	  +storeArtifacts()
+	}
+	
+	' Objects
+	class "DetectionAnalytic" <<object>> {
+	  +createdIn: Elastic/Databricks
+	  +deployedBy: Tier3
+	}
+	
+	class "Alert" <<object>> {
+	  +aggregated
+	  +triaged
+	}
+	
+	class "Ticket" <<object>> {
+	  +status
+	  +severity
+	  +assignedTo
+	}
+	
+	' Relationships
+	"DetectionAnalytic" --> "Elastic" : runs on
+	"DetectionAnalytic" --> "Databricks" : runs on
+	"Elastic" --> "Alert"
+	"Alert" --> "ServiceNow" : triggers Ticket
+	"Ticket" --> "ServiceNow"
+	
+	"Tier 1 Analyst" --> "Elastic"
+	"Tier 1 Analyst" --> "ServiceNow"
+	
+	"Tier 2 Analyst" --> "Elastic"
+	"Tier 2 Analyst" --> "Databricks"
+	"Tier 2 Analyst" --> "ServiceNow"
+	"Tier 2 Analyst" --> "Analytic Knowledge Base"
+	
+	"Tier 3 Analyst" --> "Elastic"
+	"Tier 3 Analyst" --> "Databricks"
+	"Tier 3 Analyst" --> "ServiceNow"
+	"Tier 3 Analyst" --> "DetectionAnalytic"
+	"Tier 3 Analyst" --> "Analytic Knowledge Base"
+	
+	"Production Staff" --> "ServiceNow"
+	"Production Staff" --> "AWS S3" : collaterals
+	"Analytic Knowledge Base" --> "AWS S3"
+
+@enduml
