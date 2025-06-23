@@ -1,5 +1,11 @@
 @startuml
 	title Persistent Hunt - Detection Environment Use Case
+	' EDR: Endpoint Detection & Response.
+	' EDR provides real-time visibility into endpoint activities.
+	' It helps detect & respond to advanced threats that may have bypassed initial defenses.
+	' IOC: Indicator of Compromised. 
+	' IOC is a digital clue or evidence that suggests a network or 
+	'     system has been compromised or attacked.
 	
 	actor "Threat Hunter (Tier 2/3 Analyst)" as Hunter
 	actor "Threat Intelligence Platform" as TIP

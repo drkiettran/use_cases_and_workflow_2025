@@ -1,6 +1,6 @@
 @startuml
 	title Improved Use Case: Adversary Detection to Production Workflow
-	left to right direction
+	'left to right direction
 	
 	actor "External Entity (CISA/Industry)" as External
 	actor "Tier 3 Analyst" as T3
@@ -40,6 +40,7 @@
 	
 	' Relationships
 	External --> UC1
+	UC1 --> T3
 	T3 --> UC2
 	UC2 --> UC3
 	UC3 --> UC4

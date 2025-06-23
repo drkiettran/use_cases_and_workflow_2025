@@ -1,0 +1,48 @@
+
+' Realistic Scenario: Observed TTP – Lateral Movement via RDP
+' Context:
+' A Tier 2 analyst detects suspicious behavior indicating use of T1021.001 – Remote Services: Remote Desktop Protocol (RDP) from MITRE ATT&CK, attempting to move laterally from a compromised internal host.
+' Notification Flow:
+' 	+ Tier 2 escalates the TTP to Tier 3 for deeper behavior modeling.
+' 	+ Threat Intel team is notified to validate with known IOCs or threat actor profiles.
+' 	+ SOC Manager is alerted to evaluate containment urgency.
+' 	+ Infrastructure Team is notified to audit and harden RDP usage across the network.
+' 	+ CISO is briefed if APT-level attribution is suspected.
+
+@startuml
+	title Use Case: Responding to Observed Adversary TTP (Lateral Movement via RDP)
+	left to right direction
+	
+	actor "SIEM/EDR System" as SIEM
+	actor "Tier 2 Analyst" as T2
+	actor "Tier 3 Analyst" as T3
+	actor "Threat Intel Team" as TI
+	actor "SOC Manager" as SOC
+	actor "Infrastructure Team" as Infra
+	actor "CISO" as CISO
+	
+	rectangle "TTP Response System" {
+	    usecase "Observe TTP: RDP Lateral Movement" as UC1
+	    usecase "Validate & Escalate TTP" as UC2
+	    usecase "Analyze TTP Behavior & Develop Analytic" as UC3
+	    usecase "Correlate with Threat Intel" as UC4
+	    usecase "Coordinate SOC Response" as UC5
+	    usecase "Notify CISO" as UC6
+	    usecase "Audit RDP Usage & Mitigate" as UC7
+	}
+	
+	SIEM -- UC1
+	T2 -- UC2
+	UC2 -- T3
+	UC2 -- TI
+	UC2 -- SOC
+	
+	T3 -- UC3
+	TI -- UC4
+	SOC -- UC5
+	UC5 -- CISO : escalate
+	UC6 -- CISO: notify
+	Infra -- UC7
+	UC3 -- UC5 : feedback loop
+
+@enduml

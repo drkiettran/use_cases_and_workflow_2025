@@ -1,0 +1,196 @@
+@startuml
+	title Sequence Diagram: Persistent Hunt Runtime Interaction
+	
+	actor "External Entity" as Ext
+	participant "T3 Analyst" as T3
+	participant "DetectionAnalytic"
+	participant "LogData"
+	participant "SIEM Dashboard" as SIEM
+	participant "ServiceNow" as SN
+	participant "Tier 1" as T1
+	participant "Tier 2" as T2
+	participant "Tier 3" as T3b
+	participant "Production" as Prod
+	
+	Ext -> T3 : submitTTP()
+	T3 -> DetectionAnalytic : create()
+	DetectionAnalytic -> LogData : fetch logs
+	DetectionAnalytic -> DetectionAnalytic : run()
+	DetectionAnalytic -> SIEM : sendAlert()
+	
+	SIEM -> SN : createTicket()
+	SN -> T1 : assignTicket()
+	
+	T1 -> SN : escalate()
+	SN -> T2 : assignTicket()
+	
+	T2 -> SN : escalate()
+	SN -> T3b : assignTicket()
+	SN -> Prod : assignTicket()
+	
+	T3b -> DetectionAnalytic : enhanceModel()
+	Prod -> SN : createReport()
+
+@enduml
+
+
+@startuml
+	title Object Diagram: Persistent Hunt Runtime Snapshot
+	
+	object ttp001 <<AdversaryTTPReport>>
+	ttp001 : type = "C2 over DNS"
+	
+	object analytic001 <<DetectionAnalytic>>
+	analytic001 : tech = "Elastic + ATT&CK Mapping"
+	
+	object log001 <<LogData>>
+	log001 : source = "Endpoint Logs"
+	
+	object result001 <<DetectionResult>>
+	result001 : threatLevel = "High"
+	result001 : indicator = "DNS Beaconing"
+	
+	object siem001 <<SIEMDashboard>>
+	object ticket001 <<Ticket>>
+	ticket001 : id = "INC-884"
+	ticket001 : priority = "Critical"
+	
+	object t1a <<Tier1Analyst>>
+	object t2a <<Tier2Analyst>>
+	object t3a <<Tier3Analyst>>
+	object prod1 <<ProductionStaff>>
+	
+	ttp001 --> t3a: submits
+	
+	analytic001 <-- log001: fetches log001
+	analytic001 --> result001: creates result001
+	result001 --> siem001: forwards
+	siem001 --> ticket001: creates
+	t1a --> ticket001: assigns, \nescalates
+	t2a --> ticket001: assigns, \nescaltes
+	t3a --> analytic001: creates
+	t3a <-- ticket001: assigns
+	prod1 <-- ticket001: assigns
+
+@enduml
+
+
+@startuml
+	title Class Diagram: Persistent Hunt System
+	
+	class AdversaryTTPReport {
+	  +submitReport()
+	  +getDetails(): String
+	}
+	
+	class DetectionAnalytic {
+	  +create(tech: String)
+	  +run(data: LogData): DetectionResult
+	}
+	
+	class LogData {
+	  +source: String
+	  +type: String
+	}
+	
+	class DetectionResult {
+	  +threatLevel: String
+	  +indicator: String
+	}
+	
+	class SIEMDashboard {
+	  +receiveAlert(result: DetectionResult)
+	  +triage(): Ticket
+	}
+	
+	class Ticket {
+	  +id: String
+	  +priority: String
+	}
+	
+	class ServiceNow {
+	  +createTicket(result: DetectionResult): Ticket
+	  +assignTicket(ticket: Ticket)
+	}
+	
+	class Analyst {
+	  +investigate(ticket: Ticket)
+	}
+	
+	class Tier1Analyst extends Analyst
+	class Tier2Analyst extends Analyst
+	class Tier3Analyst extends Analyst {
+	  +enhanceModel()
+	}
+	
+	class ProductionStaff {
+	  +createReport(ticket: Ticket)
+	}
+	
+	AdversaryTTPReport --> DetectionAnalytic: creates
+	DetectionAnalytic --> LogData: fetches
+	DetectionAnalytic --> DetectionResult: creates
+	DetectionResult --> SIEMDashboard: sends
+	SIEMDashboard --> Ticket: creates
+	ServiceNow --> Ticket: creates
+	Tier1Analyst --> Ticket: assigns, \nescaltes
+	Tier2Analyst --> Ticket: assigns, \nescaltes
+	Tier3Analyst --> DetectionAnalytic: runs
+	Tier3Analyst <-- Ticket: assigns
+	ProductionStaff <-- Ticket: assigns
+	ProductionStaff --> ServiceNow: creates report
+
+@enduml
+
+/' 
+The above diagrams are based on the following use case diagram:
+From the following use case of persistent hunt, provide a class diagram, 
+a sequence diagram and an object diagram to illustrate a runtime behavior.
+'/
+
+@startuml
+	title Use Case Diagram: Adversary Detection and Tiered Response Workflow
+	'left to right direction
+	' SIEM: Security Information & Event Management. 
+	' SIEM helps detect, analyze, & respond to security threats
+		
+	actor "External Entity (CISA/Industry)" as External
+	actor "Tier 3" <<analyst>> as T3
+	actor "Tier 2" <<analyst>> as T2
+	actor "Tier 1" <<analyst>> as T1
+	actor "Production" <<analyst>> as Prod
+	
+	rectangle "Adversary Detection & Response System" {
+	  
+	  usecase "1. Report Adversary TTP" as UC1
+	  usecase "2. Create Detection Analytic (Elastic/Databricks)" as UC2
+	  usecase "3. Run Detection on Visibility Data" as UC3
+	  usecase "4. Alert to SIEM Dashboard (Elastic)" as UC4
+	  usecase "5. Auto-Triage & Ticket Creation (ServiceNow)" as UC5
+	  usecase "6. Tier 1 Investigation & Ticket Assignment" as UC6
+	  usecase "7. Tier 2 Deep Investigation & Artifact Archival" as UC7
+	  usecase "8. Production Workflow & Product Creation" as UC8
+	  usecase "9. Tier 3 Detection Model Enhancement" as UC9
+	}
+	
+	' Associations
+	External --> UC1
+	T3 --> UC2
+	UC2 --> UC3
+	UC3 --> UC4
+	UC4 --> UC5
+	
+	T1 --> UC6
+	T2 --> UC7
+	Prod --> UC8
+	T3 --> UC9
+	
+	UC5 --> UC6
+	UC6 --> UC7
+	UC6 --> UC8
+	UC6 --> UC9
+	UC7 --> UC8
+	UC7 --> UC9
+
+@enduml
+

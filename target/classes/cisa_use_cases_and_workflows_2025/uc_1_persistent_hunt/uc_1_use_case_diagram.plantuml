@@ -1,6 +1,8 @@
 @startuml
 	title Use Case Diagram: Adversary Detection and Tiered Response Workflow
 	'left to right direction
+	' SIEM: Security Information & Event Management. 
+	' SIEM helps detect, analyze, & respond to security threats
 		
 	actor "External Entity (CISA/Industry)" as External
 	actor "Tier 3" <<analyst>> as T3

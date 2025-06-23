@@ -1,0 +1,274 @@
+
+@startuml
+	title Improved Use Case: Adversary Detection to Production Workflow
+	'left to right direction
+	
+	actor "External Entity (CISA/Industry)" as External
+	actor "Tier 3 Analyst" as T3
+	actor "Tier 2 Analyst" as T2
+	actor "Tier 1 Analyst" as T1
+	actor "Production Staff" as Prod
+	actor "Elastic SIEM" as Elastic
+	actor "Databricks Platform" as DBX
+	actor "ServiceNow" as SN
+	actor "Analytic KB (AWS S3 + SharePoint)" as KB
+	
+	rectangle "Adversary Detection System" {
+	    usecase "1. Observe/Report Adversary TTP" as UC1
+	    usecase "2. Create Detection Analytic (Elastic/DBX)" as UC2
+	    usecase "3. Auto-run Detection on Logs" as UC3
+	    usecase "4. Generate SIEM Alert & Auto-Triage" as UC4
+	    usecase "5. Auto-Creation of Ticket (if critical)" as UC5
+	}
+	
+	rectangle "Tiered Analyst Workflow" {
+	    usecase "6a. Tier 1 Investigation & Ticket Assignment" as UC6a
+	    usecase "6b. Investigate Event in Elastic & Link Data" as UC6b
+	
+	    usecase "7a. Tier 2 Analysis in Elastic & DBX" as UC7a
+	    usecase "7b. Archive Artifacts in KB" as UC7b
+	    usecase "7c. Reassign Ticket to Tier 3/Production" as UC7c
+	
+	    usecase "9a. Enhance Detection Models" as UC9a
+	    usecase "9b. Deploy & Archive to KB" as UC9b
+	}
+	
+	rectangle "Product Development Workflow" {
+	    usecase "8a. Review Ticket & Launch Product Workflow" as UC8a
+	    usecase "8b. Generate Product + LLM Collateral" as UC8b
+	    usecase "8c. Close Ticket and Archive" as UC8c
+	}
+	
+	' Relationships
+	External --> UC1
+	UC1 --> T3
+	T3 --> UC2
+	UC2 --> UC3
+	UC3 --> UC4
+	Elastic --> UC4
+	UC4 --> UC5
+	SN --> UC5
+	
+	T1 --> UC6a
+	T1 --> UC6b
+	UC6a --> UC7a
+	T2 --> UC7a
+	T2 --> UC7b
+	T2 --> UC7c
+	UC7b --> KB
+	UC7c --> T3
+	UC7c --> Prod
+	
+	Prod --> UC8a
+	UC8a --> UC8b
+	UC8b --> UC8c
+	UC8c --> SN
+	
+	T3 --> UC9a
+	UC9a --> UC9b
+	UC9b --> KB
+
+@enduml
+
+
+@startuml
+	title Activity Diagram: Adversary Detection to Production Workflow
+	
+	start
+	:Observe/Report Adversary TTP;
+	:Create Detection Analytic;
+	:Run Detection on Logs;
+	:Generate Alert & Auto-Triage;
+	:Auto-Creation of Ticket;
+	if (Is ticket critical?) then (yes)
+	  :Tier 1 Investigation;
+	  :Tier 2 Analysis;
+	  :Assign to Tier 3 or Production;
+	  if (Assigned to Production) then (yes)
+	    :Review & Generate Product;
+	    :Close Ticket;
+	  else (no)
+	    :Enhance Detection Models;
+	    :Deploy and Archive to KB;
+	  endif
+	endif
+	stop
+
+@enduml
+
+
+@startuml
+	title Sequence Diagram: Adversary Detection to Production Workflow
+	
+	actor "External Entity" as Ext
+	participant "T3 Analyst" as T3
+	participant "Elastic" as Elastic
+	participant "ServiceNow" as SN
+	participant "T1 Analyst" as T1
+	participant "T2 Analyst" as T2
+	participant "Production" as Prod
+	participant "KB" as KB
+	
+	Ext -> T3 : Observe/Report TTP
+	T3 -> Elastic : Create Detection Analytic
+	Elastic -> Elastic : Run Detection on Logs
+	Elastic -> SN : Send Alert + Auto-Triage
+	SN -> T1 : Assign Critical Ticket
+	T1 -> T2 : Escalate to Tier 2
+	T2 -> KB : Archive Artifacts
+	T2 -> T3 : Assign to Tier 3
+	T3 -> KB : Enhance and Archive
+	T2 -> Prod : Assign to Productaion
+	Prod -> SN : Launch Product Workflow
+	Prod -> SN : Close Ticket
+
+@enduml
+
+
+@startuml
+	title State Diagram: Adversary Detection and Workflow
+	
+	[*] --> Reported
+	Reported --> DetectionCreated : T3 Analyst
+	DetectionCreated --> DetectionExecuted : Elastic
+	DetectionExecuted --> AlertGenerated : SIEM
+	AlertGenerated --> TicketCreated : ServiceNow
+	TicketCreated --> Tier1Investigating : Tier 1 Analyst
+	Tier1Investigating --> Tier2Investigating : Escalate
+	Tier2Investigating --> Assigned : Assign to T3 or Prod
+	Assigned --> Modeling : Tier 3 Analyst
+	Assigned --> Production : Production Staff
+	Modeling --> Archived : KB
+	Production --> ProductReleased : Close ticket
+	ProductReleased --> [*]
+
+@enduml
+
+
+@startuml
+	title Class Diagram: Detection and Response
+	
+	class TTPReport { 
+		+submit() 
+	}
+	class DetectionAnalytic { 
+		+create() 
+		+run() 
+	}
+	class Alert { 
+		+triage() 
+	}
+	class Ticket { 
+		+assign() 
+	}
+	class Analyst { 
+		+investigate() 
+	}
+	class Tier1Analyst
+	class Tier2Analyst
+	class Tier3Analyst { 
+		+enhanceModel() 
+	}
+	class ProductionStaff { 
+		+createProduct() 
+	}
+	class KnowledgeBase { 
+		+archive() 
+	}
+	
+	TTPReport --> DetectionAnalytic
+	DetectionAnalytic --> Alert
+	Alert --> Ticket
+	Ticket --> Analyst
+	Analyst <|-- Tier1Analyst
+	Analyst <|-- Tier2Analyst
+	Analyst <|-- Tier3Analyst
+	Ticket --> ProductionStaff
+	Tier3Analyst --> KnowledgeBase
+	ProductionStaff --> KnowledgeBase
+
+@enduml
+
+
+@startuml
+	title Object Diagram: Runtime Example
+	
+	object ttp <<TTPReport>>
+	ttp : id = TTP-001
+	
+	object analytic <<DetectionAnalytic>>
+	analytic : tool = Elastic
+	
+	object alert <<Alert>>
+	alert : severity = High
+	
+	object ticket <<Ticket>>
+	ticket : id = INC-0001
+	
+	object t1 <<Tier1Analyst>>
+	object t2 <<Tier2Analyst>>
+	object t3 <<Tier3Analyst>>
+	object prod <<ProductionStaff>>
+	object kb <<KnowledgeBase>>
+	
+	ttp --> analytic
+	analytic --> alert
+	alert --> ticket
+	ticket --> t1
+	ticket --> t2
+	ticket --> t3
+	t3 --> kb
+	prod --> kb
+
+@enduml
+
+
+@startuml
+	title Component Diagram: System Components
+	
+	package "Adversary Detection System" {
+	  [Elastic SIEM] --> [ServiceNow]
+	  [Databricks] --> [Elastic SIEM]
+	  [Elastic SIEM] --> [Analyst Dashboard]
+	}
+	
+	package "Analyst Workflows" {
+	  [Tier 1] --> [Elastic SIEM]
+	  [Tier 2] --> [Databricks]
+	  [Tier 3] --> [Detection Engine]
+	  [Production] --> [Product Generator]
+	}
+	
+	[ServiceNow] --> [Knowledge Base]
+	[Detection Engine] --> [Elastic SIEM]
+	[Product Generator] --> [Knowledge Base]
+
+@enduml
+
+
+@startuml
+	title Deployment Diagram: System Deployment
+	
+	node "CISA Analyst Workstation" {
+	  component "Elastic SIEM Dashboard"
+	  component "ServiceNow UI"
+	}
+	
+	node "Cloud Infrastructure" {
+	  component "Databricks"
+	  component "Elastic Backend"
+	  component "ServiceNow Backend"
+	  component "LLM Product Generator"
+	}
+	
+	node "Storage Services" {
+	  database "Analytic KB (S3 + SharePoint)"
+	}
+	
+	"Elastic SIEM Dashboard" --> "Elastic Backend"
+	"ServiceNow UI" --> "ServiceNow Backend"
+	"Databricks" --> "Elastic Backend"
+	"ServiceNow Backend" --> "Analytic KB (S3 + SharePoint)"
+	"LLM Product Generator" --> "Analytic KB (S3 + SharePoint)"
+
+@enduml
