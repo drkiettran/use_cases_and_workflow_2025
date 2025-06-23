@@ -4,7 +4,7 @@
 	'left to right direction	
 	!define RECTANGLE class
 	
-	RECTANGLE "CISA / Industry / Other Entities" as ExternalEntity
+	RECTANGLE "CISA / Industry / Other Entities" as ExternalEntity <<external>>
 	RECTANGLE "Tier 3 Analyst" as Tier3 <<actor>>
 	RECTANGLE "Tier 2 Analyst" as Tier2 <<actor>>
 	RECTANGLE "Tier 1 Analyst" as Tier1 <<actor>>
@@ -16,7 +16,7 @@
 	RECTANGLE "Analytic Knowledge Base\n(ServiceNow + AWS S3)" as AKB <<system>>
 	
 	' External Threat Trigger
-	ExternalEntity --> Tier3 : Reports new TTPs
+	ExternalEntity -down-> Tier3 : Reports new TTPs
 	Tier3 --> Elastic : Create detection analytics
 	Tier3 --> Databricks : Create detection analytics
 	
@@ -27,27 +27,30 @@
 	
 	' Tier 1 Analysis
 	SN --> Tier1 : Assign ticket
-	Tier1 --> Elastic : Investigate alert
-	Tier1 --> SN : Add links and assign to Tier 2 or close ticket
+	Tier1 -right-> Elastic : Investigate alert
+	Tier1 -right-> SN : Add links and assign to Tier 2 \nor close ticket
 	
 	' Tier 2 Analysis
 	SN --> Tier2 : Receives ticket
-	Tier2 --> Elastic : Pivot to full record
-	Tier2 --> Databricks : Develop notebooks and queries
-	Tier2 --> SN : Assign to Tier 3 / Production or close ticket
-	Tier2 --> AKB : Archive analysis artifacts
+	Tier2 -left-> Elastic : Pivot to full record
+	Tier2 -left-> Databricks : Develop notebooks and queries
+	Tier2 -left-> SN : Assign to Tier 3 / Production or close ticket
+	Tier2 -left-> AKB : Archive analysis artifacts
 	
 	' Production Staff Workflow
-	SN --> Prod : Receives ticket
-	Prod --> SN : Trigger product workflow
-	Prod --> SN : Finalize product, stage release, notify partners
-	Prod --> SN : Close ticket
+	SN -down-> Prod : Receives ticket
+	Prod -up-> SN : Trigger product workflow
+	Prod -up-> SN : Finalize product, stage release, notify partners
+	Prod -up-> SN : Close ticket
 	
 	' Tier 3 Follow-up
 	SN --> Tier3 : Receives ticket
-	Tier3 --> Elastic : Pivot and enhance analytics
-	Tier3 --> Databricks : Develop models
-	Tier3 --> SN : Close ticket
-	Tier3 --> AKB : Archive new detection models
+	Tier3 -down-> Elastic : Pivot and enhance analytics
+	Tier3 -down-> Databricks : Develop models
+	Tier3 -down-> SN : Close ticket
+	Tier3 -down-> AKB : Archive new detection models
 
+	hide <<actor>> circle
+	hide <<system>> circle
+	hide <<external>> circle
 @enduml

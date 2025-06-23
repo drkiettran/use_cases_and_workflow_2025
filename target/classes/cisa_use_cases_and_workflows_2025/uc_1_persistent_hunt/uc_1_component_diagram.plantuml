@@ -1,7 +1,9 @@
 @startuml
 	title Component Diagram: Adversary TTP Detection and Response Workflow
-	left to right direction
-	package "External Observers" {
+	' left to right direction
+	skinparam componentStyle rectangle
+	
+	'rectangle "External Observers" {
 	  actor :CISA Responders:
 	  actor :Industry Partners:
 	  actor :Other Entities:
@@ -9,9 +11,9 @@
 	  ' [CISA Responders]
 	  ' [Industry Partners]
 	  ' [Other Entities]
-	}
+	'}
 	
-	package "Security Operations Environment" {
+	rectangle "Security Operations Environment" {
 	  [Elastic Platform] as Elastic
 	  [Databricks Platform] as Databricks
 	  [ServiceNow Platform] as ServiceNow
@@ -20,7 +22,7 @@
 	  [Analytic Knowledge Base\n(ServiceNow Front-End)] as AKB
 	}
 	
-	package "Actors" {
+	'rectangle "Actors" {
 		actor :Tier 1 Analyst:
 		actor :Tier 2 Analyst:
 		actor :Tier 3 Analyst:
@@ -29,32 +31,32 @@
 	  ' [Tier 2 Analyst]
 	  ' [Tier 3 Analyst]
 	  ' [Production Staff]
-	}
+	'}
 	
 	' Flow start
 	[CISA Responders] --> [Tier 3 Analyst] : Observed TTPs
 	[Industry Partners] --> [Tier 3 Analyst]
 	[Other Entities] --> [Tier 3 Analyst]
 	
-	[Tier 3 Analyst] --> Elastic : Create Detection Analytic
-	[Tier 3 Analyst] --> Databricks : (Optional) Create Analytic
+	[Tier 3 Analyst] -down-> Elastic : Create Detection Analytic
+	[Tier 3 Analyst] -down-> Databricks : (Optional) Create Analytic
 	Elastic --> SIEM : Send Detection Alerts
 	SIEM --> ServiceNow : Alert → Ticket (if critical)
 	
-	[Tier 1 Analyst] --> ServiceNow : View Ticket Queue
-	[Tier 1 Analyst] --> Elastic : Investigate and Pivot
-	[Tier 1 Analyst] --> ServiceNow : Assign or Close Ticket
+	[Tier 1 Analyst] -right-> ServiceNow : View Ticket Queue
+	[Tier 1 Analyst] -right-> Elastic : Investigate and Pivot
+	[Tier 1 Analyst] -right-> ServiceNow : Assign or Close Ticket
 	
-	[Tier 2 Analyst] --> ServiceNow : Receive & Investigate Ticket
-	[Tier 2 Analyst] --> Databricks : Query Records
-	[Tier 2 Analyst] --> Elastic : Query Logs
-	[Tier 2 Analyst] --> AKB : Archive Analysis
+	[Tier 2 Analyst] -left-> ServiceNow : Receive & Investigate Ticket
+	[Tier 2 Analyst] -left-> Databricks : Query Records
+	[Tier 2 Analyst] -left-> Elastic : Query Logs
+	[Tier 2 Analyst] -left-> AKB : Archive Analysis
 	AKB --> S3 : Store Artifacts
 	[Tier 2 Analyst] --> ServiceNow : Assign to Tier 3 or Production
 	
-	[Production Staff] --> ServiceNow : Receive Ticket
-	[Production Staff] --> ServiceNow : Trigger Product Workflow
-	[Production Staff] --> ServiceNow : Finalize and Close Workflow
+	[Production Staff] -up-> ServiceNow : Receive Ticket
+	[Production Staff] -up-> ServiceNow : Trigger Product Workflow
+	[Production Staff] -up-> ServiceNow : Finalize and Close Workflow
 	
 	[Tier 3 Analyst] --> ServiceNow : Receive Ticket
 	[Tier 3 Analyst] --> Elastic : Develop Additional Detection

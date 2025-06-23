@@ -1,5 +1,6 @@
 @startuml
 	title Component Diagram: Security Incident Detection and Response Workflow
+	skinparam componentStyle rectangle
 	
 	package "External Entities" {
 	  [CISA Responders]

@@ -24,8 +24,8 @@
 	}
 	
 	' Associations
-	External --> UC1
-	T3 --> UC2
+	External -up-> UC1
+	T3 -right-> UC2
 	UC2 --> UC3
 	UC3 --> UC4
 	UC4 --> UC5

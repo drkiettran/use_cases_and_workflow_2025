@@ -96,5 +96,8 @@
 	"Production Staff" --> "ServiceNow"
 	"Production Staff" --> "AWS S3" : collaterals
 	"Analytic Knowledge Base" --> "AWS S3"
-
+	
+	hide <<system>> circle
+	hide <<actor>> circle
+	hide <<object>> circle
 @enduml
