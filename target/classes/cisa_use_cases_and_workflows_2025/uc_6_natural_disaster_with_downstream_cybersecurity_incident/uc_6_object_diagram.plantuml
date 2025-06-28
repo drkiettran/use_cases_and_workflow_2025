@@ -1,0 +1,83 @@
+@startuml
+	title Object Diagram: Use Case 6 - Natural Disaster with Downstream Cybersecurity Incident
+	
+	object HurricaneEvent {
+	  category = "Category 4"
+	  region = "Southern States"
+	}
+	
+	object NationalWeatherService
+	
+	object Tier2Analyst {
+	  role = "Natural Disaster Monitor"
+	}
+	
+	object Tier3AnalystTeam
+	
+	object ServiceNow
+	
+	object Ticket_InfraRiskModels {
+	  status = "Assigned"
+	  priority = "High"
+	}
+	
+	object FEMA
+	object NOAA
+	
+	object Databricks
+	
+	object InfraRiskModel {
+	  asset = "Oil Refinery X"
+	  riskLevel = "High"
+	}
+	
+	object Ticket_MonitorOilRefineryX {
+	  status = "Assigned"
+	}
+	
+	object AnalyticKnowledgeBase
+	
+	object OilRefineryX {
+	  OT_Vulnerabilities = "Severe"
+	  IT_Vulnerabilities = "Severe"
+	  ChangeFreeze = true
+	}
+	
+	object RansomwareGang {
+	  target = "Oil Refinery X"
+	}
+	
+	object Tier1Analyst {
+	  role = "Triage"
+	}
+	
+	object Ticket_RansomwareIncident {
+	  status = "Linked to OilRefineryX Prep Ticket"
+	}
+	
+	object IncidentResponseTeam {
+	  members = "Tier2, Tier3 Analysts"
+	}
+	
+	object SectorRiskSpecialists
+	
+	' Relationships
+	NationalWeatherService --> HurricaneEvent
+	Tier2Analyst --> ServiceNow : creates Ticket_InfraRiskModels
+	Tier3AnalystTeam --> Ticket_InfraRiskModels
+	Tier3AnalystTeam --> Databricks : develops InfraRiskModel
+	Tier3AnalystTeam --> FEMA
+	Tier3AnalystTeam --> NOAA
+	InfraRiskModel --> Ticket_MonitorOilRefineryX
+	Ticket_MonitorOilRefineryX --> Tier2Analyst
+	Tier2Analyst --> AnalyticKnowledgeBase
+	Tier2Analyst --> OilRefineryX : contacts
+	OilRefineryX --> RansomwareGang : targeted by
+	OilRefineryX --> ServiceNow : creates Ticket_RansomwareIncident
+	Ticket_RansomwareIncident --> Tier1Analyst
+	Tier1Analyst --> Tier2Analyst
+	Tier2Analyst --> IncidentResponseTeam
+	Tier2Analyst --> Databricks : updates risk models
+	Tier2Analyst --> SectorRiskSpecialists : communicates models
+
+@enduml

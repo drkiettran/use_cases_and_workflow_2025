@@ -1,0 +1,55 @@
+@startuml
+	title Component Diagram: Natural Disaster with Downstream Cybersecurity Incident
+	
+	skinparam componentStyle rectangle
+	
+	' Actors
+	actor "Tier 1 Analyst" as T1
+	actor "Tier 2 Analyst" as T2
+	actor "Tier 3 Analyst" as T3
+	actor "Oil Refinery X" as Refinery
+	actor "Sector Risk Specialists" as SectorRisk
+	actor "National Weather Service" as NWS
+	actor "FEMA / NOAA" as Agencies
+	actor "Ransomware Gang" as ThreatActor
+	
+	' Major systems
+	component "ServiceNow" as SN
+	component "Databricks Platform" as DBX
+	component "Analytic Knowledge Base\n(ServiceNow/AWS S3)" as AKB
+	component "CISA Chat" as Chat
+	component "Critical Infrastructure Data" as CIData
+	component "Incident Response Team" as IRT
+	
+	' Flow
+	NWS --> T2 : hurricane forecast
+	T2 --> SN : create ticket for risk modeling
+	SN --> T3 : assign to Tier 3 analysts
+	
+	T3 --> Agencies : compile disaster data
+	T3 --> CIData : critical infra data
+	T3 --> DBX : develop risk models
+	DBX --> SN : update risk
+	T3 --> SN : create monitoring ticket
+	SN --> T2 : assign monitoring ticket
+	
+	T2 --> AKB : look up refinery vulnerability
+	T2 --> Chat : gather contact info
+	T2 --> Refinery : notify of vulnerabilities
+	
+	Refinery --> T2 : unable to remediate
+	
+	ThreatActor --> Refinery : exploit vulnerabilities
+	Refinery --> SN : report ransomware
+	SN --> T1 : create new ticket
+	T1 --> SN : link to existing refinery ticket
+	SN --> T2 : assign new ransomware ticket
+	
+	T2 --> IRT : engage incident response team
+	IRT --> SN : coordinate investigation
+	
+	T2 --> T3 : update risk models
+	T2 --> SN : tag Sector Risk Specialists
+	SectorRisk --> SN : receive updated risk models
+
+@enduml

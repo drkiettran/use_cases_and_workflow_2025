@@ -1,0 +1,69 @@
+@startuml
+title State Diagram: Leadership Work Prioritization
+
+[*] --> Reviewing_Work
+
+state Reviewing_Work {
+  state "Leadership reviews works-in-progress\nand productivity metrics.\nIdentifies resource misallocation\nand missing water sector snapshot." as Reviewing
+}
+
+Reviewing_Work --> Reprioritizing : Decision to reprioritize tickets
+
+state Reprioritizing {
+  state "Leadership lowers ransomware tickets\nto Level 2.\nCreates new water sector snapshot ticket.\nSets APT X + water sector snapshot\nas Level 1 priority." as Reprior
+}
+
+Reprioritizing --> Refocusing : Priorities updated in ServiceNow
+
+state Refocusing {
+  state "Tier 2 analysts wrap up ransomware tickets.\nTier 1 analysts triage water sector snapshot.\nTier 3 data scientists and SMEs assigned." as Focus
+}
+
+Refocusing --> Monitoring : Leadership shifts to monitoring
+
+state Monitoring {
+  state "Leadership monitors progress\nand provides biweekly updates\nto CISA front office from ServiceNow." as Mon
+}
+
+Monitoring --> [*] : Water sector snapshot completed
+
+@enduml
+
+
+
+@startuml
+	title State Diagram: Leadership Work Prioritization
+	
+	[*] --> Reviewing_Work
+	
+	state Reviewing_Work {
+	  wip_review :Leadership reviews works-in-progress \nand productivity metrics
+	  resource_identification:Identifies resource misallocation \nand missing water sector snapshot;
+	}
+	
+	Reviewing_Work --> Reprioritizing : Decision to reprioritize tickets
+	
+	state Reprioritizing {
+	  lower_ticket_level :Leadership lowers ransomware \ntickets to Level 2;
+	  snapshot_ticket: Leadership creates new water \nsector snapshot ticket;
+	  set_priority: Sets APT X + water sector \nsnapshot as Level 1 priority;
+	}
+	
+	Reprioritizing --> Refocusing : Priorities updated in ServiceNow
+	
+	state Refocusing {
+	  wrap_up_ticket:Tier 2 analysts wrap up \nransomware tickets;
+	  analysts_triage:Tier 1 analysts triage \nwater sector snapshot;
+	  assign:Tier 3 data scientists \n+ SMEs assigned;
+	}
+	
+	Refocusing --> Monitoring : Leadership shifts to monitoring
+	
+	state Monitoring {
+	  progress_monitor:Leadership monitors progress;
+	  biweekly_updates:Provides biweekly updates to \nCISA front office from \nServiceNow data;
+	}
+	
+	Monitoring --> [*] : Water sector snapshot completed
+
+@enduml

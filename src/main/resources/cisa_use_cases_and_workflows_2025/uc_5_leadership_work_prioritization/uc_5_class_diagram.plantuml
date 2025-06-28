@@ -1,0 +1,89 @@
+@startuml
+	title Class Diagram: Leadership Work Prioritization
+	
+	skinparam style strictuml
+	
+	' === Classes ===
+	class Leadership {
+	    +reviewProductivity()
+	    +reprioritizeTickets()
+	    +createTicket()
+	    +monitorProgress()
+	}
+	
+	class Ticket {
+	    -id: String
+	    -priority: int
+	    -status: String
+	    -description: String
+	    +updatePriority(newPriority: int)
+	    +assignTo(user: Analyst)
+	}
+	
+	class ServiceNow {
+	    +manageTickets()
+	    +updateDashboard()
+	}
+	
+	class Dashboard {
+	    -productivityMetrics: String
+	    +displayMetrics()
+	}
+	
+	class Analyst {
+	    +id: String
+	    +name: String
+	}
+	
+	class Tier1Analyst {
+	    +triageRequest()
+	}
+	
+	class Tier2Analyst {
+	    +wrapUpTicket()
+	    +refocusOnAPT()
+	}
+	
+	class Tier3DataScientist {
+	    +analyzeSectorSnapshot()
+	}
+	
+	class SectorSME {
+	    +supportSectorAnalysis()
+	}
+	
+	class ProductUpdate {
+	    -updateDetails: String
+	    -biweekly: boolean
+	    +generateUpdate()
+	}
+	
+	class CISAFrontOffice {
+	    +requestUpdate()
+	}
+	
+	' === Relationships ===
+	Leadership --> Dashboard : reviews
+	Leadership --> ServiceNow : uses
+	Leadership --> Ticket : reprioritizes
+	Leadership --> ProductUpdate : monitors
+	Leadership --> CISAFrontOffice : reports updates
+	
+	ServiceNow --> Ticket : manages
+	Dashboard --> ServiceNow : gathers data
+	
+	Ticket --> Analyst : assignedTo
+	Tier1Analyst --|> Analyst
+	Tier2Analyst --|> Analyst
+	Tier3DataScientist --|> Analyst
+	SectorSME --|> Analyst
+	
+	Tier1Analyst --> Ticket : triages
+	Tier2Analyst --> Ticket : wraps up
+	Tier3DataScientist --> Ticket : works on
+	SectorSME --> Ticket : supports
+	
+	ProductUpdate --> Ticket : pulls details
+	CISAFrontOffice --> ProductUpdate : requests
+
+@enduml

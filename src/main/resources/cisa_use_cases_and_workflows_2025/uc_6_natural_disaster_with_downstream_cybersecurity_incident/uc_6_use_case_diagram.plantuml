@@ -1,0 +1,66 @@
+@startuml
+	title Use Case 6: Natural Disaster with Downstream Cybersecurity Incident
+	
+	left to right direction
+	skinparam actorStyle awesome
+	
+	actor "National Weather Service" as NWS
+	actor "Oil Refinery X" as Refinery
+	actor "Tier 1 Analyst" as T1
+	actor "Tier 2 Analyst" as T2
+	actor "Tier 3 Analyst" as T3
+	actor "Sector Risk Specialist" as SRS
+	actor "Incident Response Team" as IRT
+	
+	rectangle "Disaster Response and Cybersecurity System" {
+	
+	  usecase "Predict Category 4 Hurricane" as UC1
+	  usecase "Create Ticket for Risk Models\n(ServiceNow)" as UC2
+	  usecase "Develop Critical Infrastructure\nRisk Models" as UC3
+	  usecase "Compile Reporting\n(FEMA, NOAA, etc.)" as UC4
+	  usecase "Predict At-Risk Assets" as UC5
+	  usecase "Create Monitoring Ticket for Refinery X" as UC6
+	  usecase "Compile Refinery X Info\nfrom CISAchat/AKB" as UC7
+	  usecase "Contact Refinery X for Mitigation" as UC8
+	  usecase "Monitor Hurricane Landfall\nand Impacts" as UC9
+	  usecase "Link New Ransomware Ticket\nto Existing Ticket" as UC10
+	  usecase "Assign Ticket to Familiar Tier 2 Analyst" as UC11
+	  usecase "Engage Incident Response Team" as UC12
+	  usecase "Perform Incident Response\nWorkflow" as UC13
+	  usecase "Update Cyber-Physical Risk Models" as UC14
+	  usecase "Communicate New Risk Models\nto Stakeholders" as UC15
+	  usecase "Close All Hurricane and IR Tickets" as UC16
+	
+	}
+	
+	' Relationships
+	NWS --> UC1
+	UC1 --> UC2
+	
+	T2 --> UC2
+	T3 --> UC3
+	T3 --> UC4
+	T3 --> UC5
+	UC5 --> UC6
+	
+	T2 --> UC7
+	T2 --> UC8
+	
+	Refinery --> UC8
+	
+	UC9 --> T2
+	
+	Refinery --> UC10 : Contact CISA after ransomware
+	T1 --> UC10
+	UC10 --> UC11
+	
+	T2 --> UC11
+	T2 --> UC12
+	IRT --> UC13
+	UC13 --> UC14
+	T2 --> UC14
+	T2 --> UC15
+	SRS --> UC15
+	T2 --> UC16
+
+@enduml

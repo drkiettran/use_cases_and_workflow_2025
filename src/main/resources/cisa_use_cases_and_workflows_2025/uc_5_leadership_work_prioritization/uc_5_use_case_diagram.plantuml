@@ -1,0 +1,41 @@
+@startuml
+	title Use Case 5: Leadership Work Prioritization
+	
+	left to right direction
+	skinparam actorStyle awesome
+	
+	actor "Leadership" as Lead
+	actor "Tier 1 Analyst" as T1
+	actor "Tier 2 Analyst" as T2
+	actor "Tier 3 Data Scientist" as T3
+	actor "Sector SMEs" as SMEs
+	
+	rectangle "CSD Work Prioritization System" {
+	
+	  usecase "Review Work-in-Progress & Metrics\n(ServiceNow/Elastic Dashboard)" as UC1
+	  usecase "Re-prioritize Tickets\n(ransomware Level 2, APT X Level 1)" as UC2
+	  usecase "Create Water Sector Snapshot Ticket" as UC3
+	  usecase "Monitor Water Sector Snapshot\nProgress & Provide Updates" as UC4
+	  usecase "View Updated Ticket Priorities" as UC5
+	  usecase "Wrap Up Existing Ransomware Tickets" as UC6
+	  usecase "Triage Water Sector Snapshot Request" as UC7
+	  usecase "Assign Water Snapshot Work\nto Tier 3 & SMEs" as UC8
+	
+	}
+	
+	' Relationships
+	Lead --> UC1
+	Lead --> UC2
+	Lead --> UC3
+	Lead --> UC4
+	
+	T2 --> UC5
+	T2 --> UC6
+	
+	T1 --> UC7
+	T1 --> UC8
+	
+	UC8 --> T3
+	UC8 --> SMEs
+
+@enduml

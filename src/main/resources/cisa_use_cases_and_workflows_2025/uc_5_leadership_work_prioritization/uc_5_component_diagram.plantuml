@@ -1,0 +1,44 @@
+@startuml
+	title Component Diagram: Leadership Work Prioritization
+	
+	left to right direction
+	skinparam componentStyle rectangle
+	
+	' External Actors
+	actor "Leadership" as L
+	actor "Tier 1 Analyst" as T1
+	actor "Tier 2 Analyst" as T2
+	actor "Tier 3 Data Scientist" as T3
+	actor "Sector SMEs" as SME
+	actor "CISA Front Office" as FO
+	
+	' Main Environment
+	package "CSD Operations Environment" {
+	    [ServiceNow Platform] as ServiceNow
+	    [Elastic Dashboard] as Elastic
+	}
+	
+	' Components
+	[Water Sector Snapshot Product] as WaterSnapshot
+	[APT X Campaign Support] as APTX
+	[Ransomware Incident Response] as Ransomware
+	
+	' Relationships
+	L --> Elastic : Review productivity\nand work in progress
+	L --> ServiceNow : Reprioritize tickets\nCreate new ticket
+	ServiceNow --> WaterSnapshot : New L1 ticket
+	ServiceNow --> APTX : Confirm priority
+	ServiceNow --> Ransomware : Downgrade priority to L2
+	
+	T2 --> ServiceNow : View ticket updates
+	T2 --> Ransomware : Wrap up active cases
+	
+	T1 --> ServiceNow : Triage water sector\nsnapshot request
+	T1 --> T3 : Assign work
+	T1 --> SME : Assign work
+	
+	L --> ServiceNow : Monitor progress
+	ServiceNow --> FO : Provide updates
+	L --> FO : Provide biweekly updates
+
+@enduml

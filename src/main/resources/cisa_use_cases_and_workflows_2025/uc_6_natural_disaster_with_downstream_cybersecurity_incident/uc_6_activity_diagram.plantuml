@@ -1,0 +1,45 @@
+@startuml
+	title Activity Diagram: Natural Disaster with Downstream Cybersecurity Incident
+	
+	start
+	
+	:Category 4 hurricane forecasted;
+	:create ServiceNow ticket for risk models (Tier 2);
+	:assign to Tier 3 analysts;
+	
+	partition Tier3 {
+	  :Compile FEMA/NOAA/CISA data;
+	  :Develop risk models in Databricks;
+	  :Predict Oil Refinery X at risk;
+	  :create ServiceNow ticket to monitor Oil Refinery X;
+	  :assign ticket to Tier 2;
+	}
+	
+	partition Tier2 {
+	  :review Oil Refinery X ticket;
+	  :gather background in AKB & CISAchat;
+	  :discover severe vulnerabilities;
+	  :attempt to contact Oil Refinery X;
+	  :Oil Refinery X cannot remediate (system freeze);
+	}
+	
+	:hurricane makes landfall;
+	:Oil Refinery X minimal damage, but ransomware gang exploits IT vulnerabilities;
+	:ransomware gang gains access;
+	:Oil Refinery X contacts CISA for assistance;
+	
+	:create new ServiceNow ticket (Tier 1 triage);
+	:link ticket to existing Oil Refinery X preparation ticket;
+	:assign to Tier 2;
+	
+	partition Tier2Incident {
+	  :engage Tier 2/Tier 3 incident response team;
+	  :follow Use Case 2 IR workflow;
+	  :update cyber-physical risk models for future incidents;
+	  :tag Sector Risk specialists in ServiceNow;
+	  :communicate new risk models to critical infrastructure stakeholders;
+	  :close all hurricane and IR tickets;
+	}
+	
+	stop
+@enduml

@@ -1,0 +1,45 @@
+@startuml
+	title State Diagram: Natural Disaster with Downstream Cybersecurity Incident
+	
+	[*] --> Monitoring_Natural_Disaster
+	
+	state Monitoring_Natural_Disaster {
+	  [*] --> Hurricane_Predicted
+	  Hurricane_Predicted --> Critical_Risk_Modeling
+	}
+	
+	state Critical_Risk_Modeling {
+	  [*] --> Ticket_Creation_for_Risk_Modeling
+	  Ticket_Creation_for_Risk_Modeling --> Developing_Risk_Models
+	  Developing_Risk_Models --> Asset_Identified
+	  Asset_Identified --> Ticket_Creation_for_Monitoring
+	}
+	
+	Ticket_Creation_for_Monitoring --> Asset_Monitoring
+	
+	state Asset_Monitoring {
+	  [*] --> Review_and_Data_Compilation
+	  Review_and_Data_Compilation --> Contact_Oil_Refinery
+	  Contact_Oil_Refinery --> Awaiting_Remediation
+	
+	  Awaiting_Remediation --> Hurricane_Landfall
+	}
+	
+	Hurricane_Landfall --> Minimal_Damage
+	
+	Minimal_Damage --> Cybersecurity_Incident_Detected
+	
+	Cybersecurity_Incident_Detected --> Incident_Response
+	
+	state Incident_Response {
+	  [*] --> New_Ticket_Creation
+	  New_Ticket_Creation --> Ticket_Assignment
+	  Ticket_Assignment --> Engage_IR_Team
+	  Engage_IR_Team --> Update_Risk_Models
+	  Update_Risk_Models --> Communicate_New_Risks
+	  Communicate_New_Risks --> Close_All_Tickets
+	}
+	
+	Close_All_Tickets --> [*]
+
+@enduml

@@ -1,0 +1,30 @@
+@startuml
+	title Use Case 5: Leadership Work Prioritization
+	
+	start
+	
+	:Leadership reviews current\nwork in ServiceNow dashboard;
+	if (Resource allocation\nappropriate?) then (No)
+	  :Determine too much time\nspent on ransomware;
+	  :Determine no work on\nwater sector snapshot;
+	  
+	  :In ServiceNow, re-prioritize\nransomware tickets to Level 2;
+	  :Create new ticket for\nwater sector snapshot;
+	else (Yes)
+	  :Continue monitoring;
+	endif
+	
+	:Tier 2 Analysts review\nupdated ransomware priorities;
+	:Tier 2 wrap up existing\nransomware tickets;
+	:Tier 2 refocus on\nAPT X campaigns;
+	
+	:Tier 1 Analysts triage\nwater sector snapshot ticket;
+	:Tier 1 assign to Tier 3 Data Scientists\nand sector SMEs;
+	
+	:Leadership monitors progress\non sector snapshot;
+	repeat
+	  :Provide biweekly updates\nto CISA Front Office;
+	repeat while (Water snapshot\nnot complete?)
+	
+	stop
+@enduml

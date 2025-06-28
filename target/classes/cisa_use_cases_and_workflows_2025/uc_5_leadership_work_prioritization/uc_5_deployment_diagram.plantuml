@@ -1,0 +1,47 @@
+@startuml
+	title Deployment Diagram: Use Case 5 - Leadership Work Prioritization
+	
+	node "Leadership Workstation" {
+	  component "Leadership Interface" as LI
+	}
+	
+	node "Analyst Workstation" {
+	  component "Tier 1 Analyst Console" as T1C
+	  component "Tier 2 Analyst Console" as T2C
+	  component "Tier 3 Data Scientist Console" as T3C
+	  component "SME Console" as SMEC
+	}
+	
+	node "ServiceNow Platform" {
+	  component "ServiceNow App" as SN
+	  database "ServiceNow Database" as SNDB
+	}
+	
+	node "Elastic Platform" {
+	  component "Elastic Dashboard" as Elastic
+	}
+	
+	node "CISA Front Office" {
+	  component "Request Portal" as FO
+	}
+	
+	' Connections
+	LI --> SN : Review Work-in-Progress
+	LI --> Elastic : View Metrics
+	LI --> SN : Reprioritize Tickets
+	LI --> SN : Create New Ticket (Water Snapshot)
+	LI --> SN : Monitor Snapshot Progress
+	LI --> FO : Provide Biweekly Updates
+	
+	FO --> SN : Request Water Sector Snapshot
+	
+	T2C --> SN : View Updated Ticket Priorities
+	T2C --> SN : Close Ransomware Tickets
+	T1C --> SN : Triage New Snapshot Request
+	T3C --> SN : Work on Water Sector Snapshot
+	SMEC --> SN : Work on Water Sector Snapshot
+	
+	SN --> SNDB : Store Ticket Data
+	Elastic --> SNDB : Pull Metrics Data
+
+@enduml

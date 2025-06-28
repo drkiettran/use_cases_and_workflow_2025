@@ -1,0 +1,69 @@
+@startuml
+	title Object Diagram: Leadership Work Prioritization
+	
+	object Leadership {
+	  role = "Prioritizer"
+	  monitoringFrequency = "biweekly"
+	}
+	
+	object ServiceNow {
+	  ransomwarePriority = "Level 2"
+	  APT_XPriority = "Level 1"
+	  waterSectorSnapshotPriority = "Level 1"
+	}
+	
+	object Ticket_Ransomware {
+	  tag = "ransomware"
+	  status = "wrapping up"
+	  priority = "Level 2"
+	}
+	
+	object Ticket_APTX {
+	  tag = "APT X"
+	  status = "in progress"
+	  priority = "Level 1"
+	}
+	
+	object Ticket_WaterSnapshot {
+	  tag = "water sector snapshot"
+	  status = "triaged"
+	  priority = "Level 1"
+	}
+	
+	object Tier2Analyst {
+	  focus = "APT X"
+	}
+	
+	object Tier1Analyst {
+	  focus = "triaging water sector"
+	}
+	
+	object Tier3DataScientist {
+	  assignedWork = "water sector snapshot"
+	}
+	
+	object SectorSME {
+	  assignedWork = "water sector snapshot"
+	}
+	
+	object CISAFrontOffice {
+	  requestedProduct = "water sector snapshot"
+	  updateFrequency = "biweekly"
+	}
+	
+	' Links / associations
+	Leadership --> ServiceNow : reviews priorities
+	Leadership --> Ticket_WaterSnapshot : creates new ticket
+	ServiceNow --> Ticket_Ransomware : updates priority
+	ServiceNow --> Ticket_APTX : maintains priority
+	ServiceNow --> Ticket_WaterSnapshot : tracks progress
+	
+	Tier2Analyst --> Ticket_Ransomware : wraps up
+	Tier2Analyst --> Ticket_APTX : refocuses
+	Tier1Analyst --> Ticket_WaterSnapshot : triages
+	Tier3DataScientist --> Ticket_WaterSnapshot : assigned
+	SectorSME --> Ticket_WaterSnapshot : assigned
+	
+	Leadership --> CISAFrontOffice : provides updates
+
+@enduml

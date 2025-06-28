@@ -1,0 +1,46 @@
+@startuml
+	title Deployment Diagram: Natural Disaster with Downstream Cybersecurity Incident
+	
+	node "National Weather Service" as NWS
+	node "FEMA / NOAA" as FedAgencies
+	node "Oil Refinery X" as RefineryX
+	node "CISA ServiceNow Platform" as SN
+	node "CISA Databricks Platform" as Databricks
+	node "CISA Analytic Knowledge Base\n(AWS S3 + ServiceNow FE)" as AKB
+	node "CISAchat Collaboration" as Chat
+	node "Tier 2 Analyst Workstation" as T2
+	node "Tier 3 Analyst Workstation" as T3
+	node "Incident Response Team Workstation" as IRT
+	node "Sector Risk Specialist Workstation" as SRS
+	
+	' Relationships
+	NWS --> T2 : hurricane forecast
+	T2 --> SN : create risk model ticket
+	SN --> T3 : assign risk modeling
+	
+	FedAgencies --> T3 : provide disaster data
+	T3 --> Databricks : develop critical infrastructure risk models
+	Databricks --> SN : record risk models
+	T3 --> SN : create monitoring ticket
+	SN --> T2 : assign monitoring of Refinery X
+	
+	T2 --> AKB : retrieve refinery vulnerabilities
+	T2 --> Chat : coordinate
+	T2 --> RefineryX : contact security POC
+	
+	RefineryX --> SN : request CISA assistance after ransomware
+	SN --> T1 : create new ticket
+	T1 --> SN : link to hurricane ticket
+	SN --> T2 : assign ransomware ticket
+	
+	T2 --> IRT : engage IR workflow
+	IRT --> SN : update ticket status
+	IRT --> RefineryX : coordinate response
+	
+	T2 --> T3 : update risk models
+	T3 --> Databricks : refine cyber-physical risk model
+	T2 --> SRS : notify updated risk models via ServiceNow
+	
+	SN --> AKB : archive and close tickets
+
+@enduml

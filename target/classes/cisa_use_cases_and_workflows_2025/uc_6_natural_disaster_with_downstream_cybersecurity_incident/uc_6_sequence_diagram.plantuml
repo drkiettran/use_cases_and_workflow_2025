@@ -1,0 +1,48 @@
+@startuml
+	title Use Case 6: Natural Disaster with Downstream Cybersecurity Incident
+	
+	actor "National Weather Service" as NWS
+	actor "Oil Refinery X" as Refinery
+	participant "Tier 2 Analyst" as T2
+	participant "Tier 3 Analysts" as T3
+	participant "ServiceNow" as SN
+	participant "Databricks" as DBX
+	participant "Analytic Knowledge Base" as AKB
+	participant "Incident Response Team" as IRT
+	participant "Sector Risk Specialists" as Sector
+	
+	== Initial Hurricane Warning ==
+	NWS -> T2 : Predict Cat 4 Hurricane
+	T2 -> SN : Create ticket to develop risk models
+	SN -> T3 : Assign risk model ticket
+	
+	== Risk Modeling ==
+	T3 -> DBX : Develop risk models\nwith critical infrastructure data
+	T3 -> FEMA : Collect reports
+	T3 -> NOAA : Collect reports
+	T3 -> SN : Create monitoring ticket for Oil Refinery X
+	SN -> T2 : Assign monitoring ticket
+	
+	== Infrastructure Discovery ==
+	T2 -> AKB : Query Oil Refinery X vulnerabilities
+	T2 -> Refinery : Attempt to mitigate vulnerabilities
+	Refinery -> T2 : Respond - cannot remediate\n(freeze on system changes)
+	
+	== Hurricane Impact and Ransomware Incident ==
+	NWS -> T2 : Hurricane makes landfall
+	Refinery -> CISA : Report ransomware attack
+	Refinery -> SN : Contact CISA creates new ticket
+	SN -> T1 : Assign ticket to T2
+	T1 -> SN : Link to previous refinery ticket
+	
+	== Incident Response ==
+	T2 -> IRT : Engage incident response team
+	IRT -> T2 : Work incident response (Use Case 2)
+	
+	== Post-Incident Modeling ==
+	T2 -> T3 : Update cyber-physical risk models
+	T2 -> Sector : Tag Sector Risk Specialists in SN
+	Sector -> Stakeholders : Share new risk models
+	SN -> T2 : Close all associated tickets
+
+@enduml

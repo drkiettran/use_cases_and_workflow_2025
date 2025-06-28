@@ -1,0 +1,67 @@
+@startuml
+	title Class Diagram: Natural Disaster with Downstream Cybersecurity Incident
+	
+	skinparam classAttributeIconSize 0
+	
+	' == Actors / Roles ==
+	class "Tier 1 Analyst" as Tier1
+	class "Tier 2 Analyst" as Tier2
+	class "Tier 3 Analyst" as Tier3
+	class "Incident Response Team" as IRT
+	class "Sector Risk Specialist" as SRS
+	class "Oil Refinery X" as Refinery
+	class "National Weather Service" as NWS
+	class "FEMA"
+	class "NOAA"
+	
+	' == Systems ==
+	class "ServiceNow"
+	class "Databricks"
+	class "CISAchat"
+	class "Analytic Knowledge Base" as AKB
+	
+	' == Core Domain Concepts ==
+	class "Critical Infrastructure Risk Model" as RiskModel
+	class "Ticket"
+	class "Cyber-Physical Risk Model" as CPRM
+	class "Ransomware Incident" as RI
+	
+	' == Attributes / Operations Examples ==
+	RiskModel : +estimateImpact()
+	RiskModel : +predictAtRiskAssets()
+	
+	CPRM : +updateWithIncident()
+	CPRM : +communicateToStakeholders()
+	
+	Ticket : +status
+	Ticket : +priority
+	Ticket : +linkedTickets
+	
+	' == Relationships ==
+	Tier2 --> Ticket : creates/triages
+	Tier3 --> Ticket : assigned
+	Tier3 --> RiskModel : develop
+	Tier3 --> Databricks : uses
+	Tier3 --> FEMA : compile data
+	Tier3 --> NOAA : compile data
+	Tier3 --> NWS : review forecast
+	Tier2 --> Refinery : contacts
+	Tier2 --> AKB : reviews
+	Tier2 --> CISAchat : uses
+	Tier2 --> CPRM : updates
+	Tier2 --> SRS : tags for comms
+	Tier1 --> Ticket : triages
+	IRT --> Ticket : supports
+	IRT --> CPRM : contributes
+	
+	Refinery --> Ticket : requests assistance
+	Refinery --> CPRM : subject of
+	Ticket --> Ticket : links to
+	Ticket --> RiskModel : references
+	ServiceNow --> Ticket : manages
+	AKB --> Ticket : stores references
+	CISAchat --> Tier2 : supports communication
+	
+	RI --> Refinery : impacts
+
+@enduml

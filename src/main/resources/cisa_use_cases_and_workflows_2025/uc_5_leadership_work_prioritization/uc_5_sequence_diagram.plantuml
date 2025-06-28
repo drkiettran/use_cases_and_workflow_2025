@@ -1,0 +1,33 @@
+@startuml
+	title Sequence Diagram - Use Case 5: Leadership Work Prioritization
+	
+	actor Leadership
+	actor "Tier 2 Analyst" as T2
+	actor "Tier 1 Analyst" as T1
+	actor "Tier 3 Data Scientist" as T3
+	actor "Sector SME" as SME
+	participant "ServiceNow/Elastic Dashboard" as SN
+	
+	' Step 1
+	Leadership -> SN : Review CSD work-in-progress\nand productivity metrics
+	SN -> Leadership : Display ransomware, APT X,\nwater sector status
+	
+	' Step 2
+	Leadership -> SN : Change ransomware tickets to Level 2\nCreate new water sector snapshot ticket
+	SN -> Leadership : Confirm prioritization changes
+	
+	' Step 3
+	T2 -> SN : Check ticket queue
+	SN -> T2 : Show updated ticket priorities
+	T2 -> SN : Close out ransomware tickets
+	
+	' Step 4
+	T1 -> SN : See new water sector snapshot ticket
+	T1 -> T3 : Assign data analysis
+	T1 -> SME : Assign subject matter tasks
+	
+	' Step 5
+	Leadership -> SN : Monitor water sector snapshot progress
+	SN -> Leadership : Provide biweekly status updates
+
+@enduml
